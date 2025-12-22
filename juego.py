@@ -4,7 +4,7 @@ import os
 import getpass
 from openpyxl import Workbook, load_workbook
 
-# --- COLORES (OPCIONAL) ---
+# --- COLORES ---
 try:
     from termcolor import colored
     COLORES_HABILITADOS = True  # Corregido
