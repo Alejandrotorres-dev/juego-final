@@ -1,7 +1,7 @@
 import random
 import datetime
 import os
-import getpass  
+import getpass
 from openpyxl import Workbook, load_workbook
 
 
@@ -12,11 +12,11 @@ def inicializar_excel():
         wb = Workbook()
         ws = wb.active
         ws.title = "Estadísticas"
-        ws.append(["Fecha", "Modo", "Jugador1", "Jugador2", "Dificultad", 
+        ws.append(["Fecha", "Modo", "Jugador1", "Jugador2", "Dificultad",
                    "Número Secreto", "Intentos Usados", "Resultado", "Nota"])
         wb.save(ARCHIVO_EXCEL)
 
-def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto, 
+def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto,
                     intentos_usados, max_intentos, ganado):
     fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     resultado = "Ganado" if ganado else "Perdido"
@@ -28,7 +28,7 @@ def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto,
     
     wb = load_workbook(ARCHIVO_EXCEL)
     ws = wb["Estadísticas"]
-    ws.append([fecha, modo, jugador1, jugador2 or "", dificultad, 
+    ws.append([fecha, modo, jugador1, jugador2 or "", dificultad,
                numero_secreto, intentos_usados, resultado, nota])
     wb.save(ARCHIVO_EXCEL)
 
@@ -43,7 +43,7 @@ def mostrar_estadisticas(filtro_usuario=None):
     filas = list(ws.iter_rows(min_row=2, values_only=True))
     
     if filtro_usuario:
-        filas = [f for f in filas if filtro_usuario.lower() in (f[2] or "").lower() or 
+        filas = [f for f in filas if filtro_usuario.lower() in (f[2] or "").lower() or
                  filtro_usuario.lower() in (f[3] or "").lower()]
         print(f"\n=== ESTADÍSTICAS FILTRADAS POR USUARIO: {filtro_usuario.upper()} ===")
     else:
@@ -60,12 +60,12 @@ def mostrar_estadisticas(filtro_usuario=None):
     for row in filas:
         fecha, modo, j1, j2, dif, num, intentos, res, nota = row
         j2 = j2 or "-"
-        # Ocultamos el número si la partida fue ganada
         num_mostrar = "***" if res == "Ganado" else num
         print(f"{fecha:20} {modo:10} {j1:12} {j2:12} {dif:6} "
               f"{num_mostrar:12} {intentos:8} {res:10} {nota:5}")
 
-def elegir_dificultad_general():
+def elegir_dificultad():
+    """Submenú común de dificultad usado en ambos modos."""
     while True:
         print("\nElige la dificultad:")
         print("1. Fácil (20 intentos)")
@@ -81,33 +81,8 @@ def elegir_dificultad_general():
         else:
             print("Opción inválida.")
 
-def elegir_dificultad_dos_jugadores(numero):
-    print(f"\nNúmero secreto registrado")
-    print("\nSugerencias según el número:")
-    if numero <= 100 or numero >= 900:
-        print("- Está en un extremo → más difícil de adivinar.")
-    elif numero <= 300 or numero >= 700:
-        print("- Algo alejado del centro → dificultad media recomendada.")
-    else:
-        print("- Cerca del centro → más fácil de adivinar.")
-    
-    while True:
-        print("\nElige la dificultad para el Jugador 2:")
-        print("1. Fácil (20 intentos)")
-        print("2. Medio (12 intentos)")
-        print("3. Difícil (5 intentos)")
-        opc = input("Opción (1-3): ").strip()
-        if opc == "1":
-            return "Fácil", 20
-        elif opc == "2":
-            return "Medio", 12
-        elif opc == "3":
-            return "Difícil", 5
-        else:
-            print("Opción inválida.")
-
 def jugar_solitario():
-    dificultad_texto, max_intentos = elegir_dificultad_general()
+    dificultad_texto, max_intentos = elegir_dificultad()
     
     nombre = input("\nIngrese su nombre: ").strip()
     if not nombre:
@@ -129,7 +104,7 @@ def jugar_solitario():
         intentos += 1
         if adivinanza == numero_secreto:
             print(f"¡Felicidades {nombre}! ¡Has ganado en {intentos} intentos!")
-            guardar_partida("Solitario", nombre, None, dificultad_texto, 
+            guardar_partida("Solitario", nombre, None, dificultad_texto,
                             numero_secreto, intentos, max_intentos, True)
             return
         elif adivinanza < numero_secreto:
@@ -140,7 +115,7 @@ def jugar_solitario():
         print(f"Te quedan {max_intentos - intentos} intentos.\n")
     
     print(f"¡Has perdido! El número era {numero_secreto}.")
-    guardar_partida("Solitario", nombre, None, dificultad_texto, 
+    guardar_partida("Solitario", nombre, None, dificultad_texto,
                     numero_secreto, intentos, max_intentos, False)
 
 def jugar_dos_jugadores():
@@ -150,12 +125,12 @@ def jugar_dos_jugadores():
         print("Nombre inválido.")
         return
 
-    # Limpiar pantalla y pasar al Jugador 1 
+    # Limpiar pantalla y pasar al Jugador 1
     print("\n" * 50)
     print(f"{jugador1}, ahora es tu turno de introducir el número secreto.")
     input("Presiona Enter cuando estés listo y el Jugador 2 no esté mirando...")
 
-    # Entrada oculta del número secreto 
+    # Entrada oculta del número secreto
     try:
         numero_secreto_str = getpass.getpass(prompt=f"{jugador1}, ingresa el número secreto (1-1000): ")
         numero_secreto = int(numero_secreto_str)
@@ -165,8 +140,18 @@ def jugar_dos_jugadores():
         print("\nNúmero inválido. Partida cancelada.")
         return
 
-    # Elegir dificultad con sugerencia
-    dificultad_texto, max_intentos = elegir_dificultad_dos_jugadores(numero_secreto)
+    # Sugerencias según el número elegido
+    print(f"\nNúmero secreto registrado.")
+    print("\nSugerencias según el número:")
+    if numero_secreto <= 100 or numero_secreto >= 900:
+        print("- Está en un extremo → más difícil de adivinar.")
+    elif numero_secreto <= 300 or numero_secreto >= 700:
+        print("- Algo alejado del centro → dificultad media recomendada.")
+    else:
+        print("- Cerca del centro → más fácil de adivinar.")
+
+    
+    dificultad_texto, max_intentos = elegir_dificultad()
 
     # Limpiar pantalla para el Jugador 2
     print("\n" * 50)
