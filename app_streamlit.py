@@ -7,8 +7,8 @@ import os
 
 # =================== CONFIGURACIÓN DE LA PÁGINA ===================
 st.set_page_config(
-    page_title="🎮 Juego de Adivinanza",
-    page_icon="🎯",
+    page_title="Juego de Adivinanza",
+    page_icon="🔢",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -21,12 +21,11 @@ def cargar_estadisticas_desde_csv():
     try:
         if os.path.exists(ARCHIVO_ESTADISTICAS):
             df = pd.read_csv(ARCHIVO_ESTADISTICAS)
-            # Convertir DataFrame a lista de diccionarios
             return df.to_dict('records')
         else:
             return []
     except Exception as e:
-        st.warning(f"⚠️ No se pudieron cargar las estadísticas: {e}")
+        st.warning(f"No se pudieron cargar las estadísticas: {e}")
         return []
 
 def guardar_estadisticas_a_csv():
@@ -37,7 +36,7 @@ def guardar_estadisticas_a_csv():
             df.to_csv(ARCHIVO_ESTADISTICAS, index=False)
             return True
     except Exception as e:
-        st.error(f"❌ Error al guardar estadísticas: {e}")
+        st.error(f"Error al guardar estadísticas: {e}")
     return False
 
 # =================== ESTILOS CSS ===================
@@ -109,13 +108,10 @@ h1 {
 """, unsafe_allow_html=True)
 
 # =================== INICIALIZAR DATOS EN SESSION_STATE ===================
-# Variable para controlar la opción seleccionada desde la página de inicio
 if 'opcion_menu' not in st.session_state:
-    st.session_state.opcion_menu = "🏠 Inicio"
+    st.session_state.opcion_menu = "Inicio"
 
-# Streamlit usa session_state para mantener datos entre interacciones
 if 'estadisticas' not in st.session_state:
-    # Cargar desde CSV si existe
     st.session_state.estadisticas = cargar_estadisticas_desde_csv()
 
 if 'numero_secreto_solo' not in st.session_state:
@@ -135,9 +131,8 @@ if 'resultado_mostrado_solo' not in st.session_state:
 if 'mensaje_resultado_solo' not in st.session_state:
     st.session_state.mensaje_resultado_solo = ""
 if 'tipo_resultado_solo' not in st.session_state:
-    st.session_state.tipo_resultado_solo = ""  # "correcto" o "incorrecto"
+    st.session_state.tipo_resultado_solo = ""
 
-# Variables para modo 2 jugadores
 if 'numero_secreto_j2' not in st.session_state:
     st.session_state.numero_secreto_j2 = None
 if 'intentos_j2' not in st.session_state:
@@ -151,13 +146,13 @@ if 'dificultad_j2' not in st.session_state:
 if 'max_intentos_j2' not in st.session_state:
     st.session_state.max_intentos_j2 = 20
 if 'fase_j2' not in st.session_state:
-    st.session_state.fase_j2 = 1  # 1: Jugador1, 2: Jugador2
+    st.session_state.fase_j2 = 1
 if 'resultado_mostrado_j2' not in st.session_state:
     st.session_state.resultado_mostrado_j2 = False
 if 'mensaje_resultado_j2' not in st.session_state:
     st.session_state.mensaje_resultado_j2 = ""
 if 'tipo_resultado_j2' not in st.session_state:
-    st.session_state.tipo_resultado_j2 = ""  # "correcto" o "incorrecto"
+    st.session_state.tipo_resultado_j2 = ""
 
 # =================== FUNCIONES DEL JUEGO ===================
 def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto, intentos_usados, ganado):
@@ -176,10 +171,8 @@ def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto, intent
     else:
         nota = 0.0
     
-    # Ocultar número si la partida fue ganada
     num_mostrar = "***" if ganado else numero_secreto
     
-    # Añadir a session_state
     st.session_state.estadisticas.append({
         "Fecha": fecha,
         "Modo": modo,
@@ -193,168 +186,143 @@ def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto, intent
         "Nota": nota
     })
     
-    # GUARDAR EN CSV
     guardar_estadisticas_a_csv()
 
 def sugerir_dificultad(numero):
     """Sugiere dificultad basada en el número"""
     if numero <= 100 or numero >= 900:
-        return "Está en un extremo → más difícil de adivinar."
+        return "Está en un extremo, más difícil de adivinar."
     elif numero <= 300 or numero >= 700:
-        return "Algo alejado del centro → dificultad media recomendada."
+        return "Algo alejado del centro, dificultad media recomendada."
     else:
-        return "Cerca del centro → más fácil de adivinar."
+        return "Cerca del centro, más fácil de adivinar."
 
 # =================== INTERFAZ PRINCIPAL ===================
-st.title("🎮 JUEGO DE ADIVINANZA")
+st.title("JUEGO DE ADIVINANZA")
 st.markdown("---")
 
-# Barra lateral para navegación
 with st.sidebar:
-    st.header("🎮 MENÚ PRINCIPAL")
+    st.header("MENÚ PRINCIPAL")
     
-    # Usar la variable de sesión para mantener la selección
     opcion = st.radio(
         "Selecciona una opción:",
-        ["🏠 Inicio", "🔢 Modo Solitario", "👥 Modo 2 Jugadores", 
-         "📊 Estadísticas", "📖 Instrucciones", "ℹ️ Acerca de"],
+        ["Inicio", "Modo Solitario", "Modo 2 Jugadores", 
+         "Estadísticas", "Instrucciones", "Acerca de"],
         key="menu_principal",
-        index=["🏠 Inicio", "🔢 Modo Solitario", "👥 Modo 2 Jugadores", 
-               "📊 Estadísticas", "📖 Instrucciones", "ℹ️ Acerca de"].index(st.session_state.opcion_menu)
+        index=["Inicio", "Modo Solitario", "Modo 2 Jugadores", 
+               "Estadísticas", "Instrucciones", "Acerca de"].index(st.session_state.opcion_menu)
     )
     
-    # Actualizar la variable de sesión cuando se cambia la opción
     st.session_state.opcion_menu = opcion
     
     st.markdown("---")
-    st.caption(f"📊 Partidas jugadas: {len(st.session_state.estadisticas)}")
-    if st.session_state.estadisticas:
-        st.caption(f"💾 Guardadas en: {ARCHIVO_ESTADISTICAS}")
+    st.caption(f"Partidas jugadas: {len(st.session_state.estadisticas)}")
 
 # =================== PÁGINA DE INICIO ===================
-if opcion == "🏠 Inicio":
-    st.header("¡Bienvenido al Juego de Adivinanza! 🎯")
+if opcion == "Inicio":
+    st.header("Bienvenido al Juego de Adivinanza")
     
     col1, col2 = st.columns([2, 1])
     with col1:
         st.markdown("""
-        ## 🎮 ¿Cómo funciona?
+        ## ¿Cómo funciona?
         
         **¡Adivina el número secreto entre 1 y 1000!**
         
         ### Modos de juego:
-        1. **🔢 Modo Solitario**  
+        1. **Modo Solitario**  
            - Juega contra la computadora
            - Elige tu dificultad
            - Intenta adivinar el número
         
-        2. **👥 Modo 2 Jugadores**  
+        2. **Modo 2 Jugadores**  
            - Un jugador piensa el número
            - Otro intenta adivinarlo
-           - ¡Perfecto para jugar con amigos!
+           - Perfecto para jugar con amigos!
         
-        ### 📊 Estadísticas:
+        ### Estadísticas:
         - Registro de todas tus partidas
         - Calificación por partida
         - Filtros por jugador y dificultad
         
-        ### 🏆 Sistema de puntuación:
-        - **+ puntos** por adivinar rápido
-        - **+ puntos** por elegir mayor dificultad
-        - **Nota final** de 0 a 10
+        ### Sistema de puntuación:
+        - + puntos por adivinar rápido
+        - + puntos por elegir mayor dificultad
+        - Nota final de 0 a 10
         """)
     
     with col2:
-        # Contenedor para el récord
         record_container = st.container()
         with record_container:
             if st.session_state.estadisticas:
-                # Encontrar la mejor nota
                 mejor_partida = max(st.session_state.estadisticas, key=lambda x: x["Nota"])
-                st.success("🎯 **¡NUEVO RÉCORD!**")
+                st.success("NUEVO RÉCORD")
                 st.metric("Mejor nota", f"{mejor_partida['Nota']}/10", delta=f"por {mejor_partida['Jugador1']}")
                 st.caption(f"Modo: {mejor_partida['Modo']}")
                 st.caption(f"Dificultad: {mejor_partida['Dificultad']}")
             else:
-                st.info("**NUEVO RÉCORD!**")
+                st.info("NUEVO RÉCORD")
                 st.info("Aún no hay partidas jugadas")
         
         st.markdown("---")
         
-        # =================== BOTONES NORMALES ===================
-        st.markdown("### 🎯 Comenzar ahora:")
+        st.markdown("### Comenzar ahora:")
         
         col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
-            # Botón normal para modo solitario
-            if st.button("🎮 **Jugar modo solitario**", 
+            if st.button("Jugar modo solitario", 
                         type="primary", 
                         use_container_width=True,
                         key="btn_inicio_solo",
                         help="Jugar contra la computadora"):
-                # Cambiar a modo solitario y configurar partida
-                st.session_state.opcion_menu = "🔢 Modo Solitario"
+                st.session_state.opcion_menu = "Modo Solitario"
                 st.session_state.resultado_mostrado_solo = False
                 st.rerun()
         
         with col_btn2:
-            # Botón normal para modo 2 jugadores
-            if st.button("👥 **Jugar con amigos**", 
+            if st.button("Jugar con amigos", 
                         type="primary", 
                         use_container_width=True,
                         key="btn_inicio_amigos",
                         help="Jugar con otra persona"):
-                # Cambiar a modo 2 jugadores
-                st.session_state.opcion_menu = "👥 Modo 2 Jugadores"
+                st.session_state.opcion_menu = "Modo 2 Jugadores"
                 st.session_state.resultado_mostrado_j2 = False
                 st.rerun()
-        
-        # Botón adicional para ver estadísticas
-        st.markdown("---")
-        if st.button("📊 **Ver mis estadísticas**", 
-                    use_container_width=True,
-                    key="btn_inicio_stats",
-                    help="Ver historial de partidas"):
-            st.session_state.opcion_menu = "📊 Estadísticas"
-            st.rerun()
 
 # =================== MODO SOLITARIO ===================
-elif opcion == "🔢 Modo Solitario":
-    st.header("🔢 MODO SOLITARIO")
+elif opcion == "Modo Solitario":
+    st.header("MODO SOLITARIO")
     
-    # Mostrar mensaje de resultado si existe
     if st.session_state.resultado_mostrado_solo and st.session_state.mensaje_resultado_solo:
         if st.session_state.tipo_resultado_solo == "correcto":
             st.markdown(f'<div class="mensaje-correcto">{st.session_state.mensaje_resultado_solo}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="mensaje-incorrecto">{st.session_state.mensaje_resultado_solo}</div>', unsafe_allow_html=True)
         
-        # Botón para limpiar mensaje y volver a jugar
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🔄 Jugar otra partida", type="primary", use_container_width=True):
+            if st.button("Jugar otra partida", type="primary", use_container_width=True):
                 st.session_state.resultado_mostrado_solo = False
                 st.session_state.mensaje_resultado_solo = ""
                 st.session_state.partida_activa_solo = False
                 st.session_state.numero_secreto_solo = None
                 st.rerun()
         with col2:
-            if st.button("📊 Ver estadísticas", use_container_width=True):
-                st.session_state.opcion_menu = "📊 Estadísticas"
+            if st.button("Ver estadísticas", use_container_width=True):
+                st.session_state.opcion_menu = "Estadísticas"
                 st.rerun()
         
         st.markdown("---")
     
     if not st.session_state.partida_activa_solo and not st.session_state.resultado_mostrado_solo:
-        # Configuración inicial de la partida
         col_config1, col_config2 = st.columns(2)
         
         with col_config1:
-            st.subheader("👤 Configuración del jugador")
+            st.subheader("Configuración del jugador")
             nombre = st.text_input("Tu nombre:", placeholder="Ej: Carlos", key="nombre_solo_input")
             
-            st.subheader("⚙️ Dificultad")
+            st.subheader("Dificultad")
             dificultad_opcion = st.selectbox(
                 "Selecciona la dificultad:",
                 ["Fácil", "Medio", "Difícil"],
@@ -362,30 +330,28 @@ elif opcion == "🔢 Modo Solitario":
                 key="dificultad_select"
             )
             
-            # Configurar máximo de intentos según dificultad
             if dificultad_opcion == "Fácil":
                 max_intentos = 20
-                st.info("🎯 **Fácil**: 20 intentos")
+                st.info("Fácil: 20 intentos")
             elif dificultad_opcion == "Medio":
                 max_intentos = 12
-                st.warning("⚡ **Medio**: 12 intentos")
+                st.warning("Medio: 12 intentos")
             else:
                 max_intentos = 5
-                st.error("💀 **Difícil**: Solo 5 intentos")
+                st.error("Difícil: Solo 5 intentos")
         
         with col_config2:
-            st.subheader("🎯 ¿Listo para jugar?")
+            st.subheader("¿Listo para jugar?")
             st.markdown(f"""
             ### Reglas:
-            - Número entre **1 y 1000**
-            - **{max_intentos} intentos** máximo
-            - El sistema te dirá si el número es **mayor** o **menor**
-            - ¡Buena suerte! 🍀
+            - Número entre 1 y 1000
+            - {max_intentos} intentos máximo
+            - El sistema te dirá si el número es mayor o menor
+            - ¡Buena suerte!
             """)
             
-            if st.button("🎮 COMENZAR PARTIDA", type="primary", use_container_width=True):
+            if st.button("COMENZAR PARTIDA", type="primary", use_container_width=True):
                 if nombre:
-                    # Inicializar partida
                     st.session_state.jugador_solo = nombre
                     st.session_state.dificultad_solo = dificultad_opcion
                     st.session_state.max_intentos_solo = max_intentos
@@ -394,25 +360,22 @@ elif opcion == "🔢 Modo Solitario":
                     st.session_state.partida_activa_solo = True
                     st.session_state.resultado_mostrado_solo = False
                     st.session_state.mensaje_resultado_solo = ""
-                    st.rerun()  # Recargar la página para mostrar el juego
+                    st.rerun()
                 else:
-                    st.error("⚠️ Por favor, ingresa tu nombre")
+                    st.error("Por favor, ingresa tu nombre")
     
     elif st.session_state.partida_activa_solo:
-        # Juego en curso - VERIFICAR QUE EL NÚMERO SECRETO EXISTE
         if st.session_state.numero_secreto_solo is None:
-            # Si por algún error no hay número secreto, generar uno
             st.session_state.numero_secreto_solo = random.randint(1, 1000)
-            st.warning("⚠️ Se reinició la partida. ¡Buena suerte!")
+            st.warning("Se reinició la partida. ¡Buena suerte!")
         
-        st.success(f"🎮 **PARTIDA ACTIVA** - Jugador: {st.session_state.jugador_solo}")
+        st.success(f"PARTIDA ACTIVA - Jugador: {st.session_state.jugador_solo}")
         
         col_juego1, col_juego2 = st.columns([2, 1])
         
         with col_juego1:
-            st.subheader("🎯 Haz tu adivinanza")
+            st.subheader("Haz tu adivinanza")
             
-            # Input para adivinar
             adivinanza = st.number_input(
                 "Ingresa un número (1-1000):",
                 min_value=1,
@@ -423,24 +386,21 @@ elif opcion == "🔢 Modo Solitario":
             
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                if st.button("✅ INTENTAR", type="primary", use_container_width=True):
+                if st.button("INTENTAR", type="primary", use_container_width=True):
                     st.session_state.intentos_solo += 1
                     
-                    # VERIFICAR QUE HAY NÚMERO SECRETO ANTES DE COMPARAR
                     if st.session_state.numero_secreto_solo is None:
-                        st.error("❌ Error: No hay número secreto. Reinicia la partida.")
+                        st.error("Error: No hay número secreto. Reinicia la partida.")
                     elif adivinanza == st.session_state.numero_secreto_solo:
-                        # JUGADOR GANA - CORRECTO
                         st.session_state.resultado_mostrado_solo = True
                         st.session_state.tipo_resultado_solo = "correcto"
                         st.session_state.mensaje_resultado_solo = f"""
-                        <h3>🎉 ¡FELICIDADES {st.session_state.jugador_solo.upper()}!</h3>
-                        <p><strong>✅ CORRECTO</strong> - ¡Has ganado en {st.session_state.intentos_solo} intentos!</p>
-                        <p>🎯 Número secreto: <strong>{st.session_state.numero_secreto_solo}</strong></p>
-                        <p>📊 Dificultad: {st.session_state.dificultad_solo}</p>
+                        <h3>¡FELICIDADES {st.session_state.jugador_solo.upper()}!</h3>
+                        <p><strong>CORRECTO</strong> - ¡Has ganado en {st.session_state.intentos_solo} intentos!</p>
+                        <p>Número secreto: <strong>{st.session_state.numero_secreto_solo}</strong></p>
+                        <p>Dificultad: {st.session_state.dificultad_solo}</p>
                         """
                         
-                        # Guardar partida
                         guardar_partida(
                             "Solitario",
                             st.session_state.jugador_solo,
@@ -451,25 +411,22 @@ elif opcion == "🔢 Modo Solitario":
                             True
                         )
                         
-                        # Mantener partida activa para mostrar resultado
                         st.rerun()
                     
                     elif adivinanza < st.session_state.numero_secreto_solo:
-                        st.warning("📈 **MAYOR** - El número secreto es mayor")
+                        st.warning("MAYOR - El número secreto es mayor")
                     else:
-                        st.warning("📉 **MENOR** - El número secreto es menor")
+                        st.warning("MENOR - El número secreto es menor")
                     
-                    # Verificar si se acabaron los intentos
                     if st.session_state.intentos_solo >= st.session_state.max_intentos_solo:
-                        # JUGADOR PIERDE - INCORRECTO
                         st.session_state.resultado_mostrado_solo = True
                         st.session_state.tipo_resultado_solo = "incorrecto"
                         st.session_state.mensaje_resultado_solo = f"""
-                        <h3>😢 ¡SE ACABARON LOS INTENTOS!</h3>
-                        <p><strong>❌ INCORRECTO</strong> - No lograste adivinar el número.</p>
-                        <p>🎯 El número era: <strong>{st.session_state.numero_secreto_solo}</strong></p>
-                        <p>📊 Dificultad: {st.session_state.dificultad_solo}</p>
-                        <p>🔄 ¡Inténtalo de nuevo!</p>
+                        <h3>¡SE ACABARON LOS INTENTOS!</h3>
+                        <p><strong>INCORRECTO</strong> - No lograste adivinar el número.</p>
+                        <p>El número era: <strong>{st.session_state.numero_secreto_solo}</strong></p>
+                        <p>Dificultad: {st.session_state.dificultad_solo}</p>
+                        <p>¡Inténtalo de nuevo!</p>
                         """
                         
                         if st.session_state.numero_secreto_solo is not None:
@@ -486,70 +443,61 @@ elif opcion == "🔢 Modo Solitario":
                         st.rerun()
             
             with col_btn2:
-                if st.button("🔄 Cancelar partida", use_container_width=True):
+                if st.button("Cancelar partida", use_container_width=True):
                     st.session_state.partida_activa_solo = False
                     st.session_state.numero_secreto_solo = None
                     st.session_state.resultado_mostrado_solo = False
                     st.rerun()
         
         with col_juego2:
-            st.subheader("📊 Estado de la partida")
+            st.subheader("Estado de la partida")
             
-            # Mostrar progreso
             st.metric(
                 "Intentos usados",
                 f"{st.session_state.intentos_solo} / {st.session_state.max_intentos_solo}"
             )
             
-            # Barra de progreso
             progreso = st.session_state.intentos_solo / st.session_state.max_intentos_solo
             st.progress(progreso)
             
-            # Información
-            st.info(f"**Dificultad:** {st.session_state.dificultad_solo}")
-            st.info(f"**Jugador:** {st.session_state.jugador_solo}")
+            st.info(f"Dificultad: {st.session_state.dificultad_solo}")
+            st.info(f"Jugador: {st.session_state.jugador_solo}")
             
-            # Pistas (solo si hay varios intentos)
             if st.session_state.intentos_solo > 0 and st.session_state.numero_secreto_solo is not None:
-                with st.expander("💡 Pistas estadísticas"):
+                with st.expander("Pistas estadísticas"):
                     st.caption(f"Último intento: {adivinanza}")
                     if adivinanza < st.session_state.numero_secreto_solo:
-                        st.caption("Prueba con números entre " + 
-                                  f"**{adivinanza + 1}** y **1000**")
+                        st.caption(f"Prueba con números entre {adivinanza + 1} y 1000")
                     elif adivinanza > st.session_state.numero_secreto_solo:
-                        st.caption("Prueba con números entre " +
-                                  f"**1** y **{adivinanza - 1}**")
+                        st.caption(f"Prueba con números entre 1 y {adivinanza - 1}")
 
 # =================== MODO 2 JUGADORES ===================
-elif opcion == "👥 Modo 2 Jugadores":
-    st.header("👥 MODO 2 JUGADORES")
+elif opcion == "Modo 2 Jugadores":
+    st.header("MODO 2 JUGADORES")
     
-    # Mostrar mensaje de resultado si existe
     if st.session_state.resultado_mostrado_j2 and st.session_state.mensaje_resultado_j2:
         if st.session_state.tipo_resultado_j2 == "correcto":
             st.markdown(f'<div class="mensaje-correcto">{st.session_state.mensaje_resultado_j2}</div>', unsafe_allow_html=True)
         else:
             st.markdown(f'<div class="mensaje-incorrecto">{st.session_state.mensaje_resultado_j2}</div>', unsafe_allow_html=True)
         
-        # Botón para volver a jugar
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🔄 Jugar otra partida", type="primary", use_container_width=True):
+            if st.button("Jugar otra partida", type="primary", use_container_width=True):
                 st.session_state.resultado_mostrado_j2 = False
                 st.session_state.mensaje_resultado_j2 = ""
                 st.session_state.fase_j2 = 1
                 st.session_state.numero_secreto_j2 = None
                 st.rerun()
         with col2:
-            if st.button("📊 Ver estadísticas", use_container_width=True):
-                st.session_state.opcion_menu = "📊 Estadísticas"
+            if st.button("Ver estadísticas", use_container_width=True):
+                st.session_state.opcion_menu = "Estadísticas"
                 st.rerun()
         
         st.markdown("---")
     
-    # Fase 1: Jugador 1 ingresa el número
     if st.session_state.fase_j2 == 1 and not st.session_state.resultado_mostrado_j2:
-        st.subheader("🎯 FASE 1: Jugador 1 (Piensa el número)")
+        st.subheader("FASE 1: Jugador 1 (Piensa el número)")
         
         col_j1_1, col_j1_2 = st.columns(2)
         
@@ -567,13 +515,12 @@ elif opcion == "👥 Modo 2 Jugadores":
                 help="¡No le digas a nadie el número!"
             )
             
-            # Mostrar sugerencia de dificultad
             if numero_secreto:
                 sugerencia = sugerir_dificultad(numero_secreto)
-                st.info(f"💡 **Sugerencia:** {sugerencia}")
+                st.info(f"Sugerencia: {sugerencia}")
         
         with col_j1_2:
-            st.subheader("⚙️ Configurar dificultad")
+            st.subheader("Configurar dificultad")
             dificultad_j2_opcion = st.selectbox(
                 "Dificultad para el Jugador 2:",
                 ["Fácil", "Medio", "Difícil"],
@@ -581,20 +528,19 @@ elif opcion == "👥 Modo 2 Jugadores":
                 key="dificultad_j2_select"
             )
             
-            # Configurar máximo de intentos
             if dificultad_j2_opcion == "Fácil":
                 max_j2 = 20
-                st.info("🎯 **Fácil**: 20 intentos")
+                st.info("Fácil: 20 intentos")
             elif dificultad_j2_opcion == "Medio":
                 max_j2 = 12
-                st.warning("⚡ **Medio**: 12 intentos")
+                st.warning("Medio: 12 intentos")
             else:
                 max_j2 = 5
-                st.error("💀 **Difícil**: Solo 5 intentos")
+                st.error("Difícil: Solo 5 intentos")
             
             st.markdown("---")
             
-            if st.button("🔒 REGISTRAR NÚMERO", type="primary", use_container_width=True):
+            if st.button("REGISTRAR NÚMERO", type="primary", use_container_width=True):
                 if jugador1 and 1 <= numero_secreto <= 1000:
                     st.session_state.jugador1_nombre = jugador1
                     st.session_state.numero_secreto_j2 = numero_secreto
@@ -606,18 +552,16 @@ elif opcion == "👥 Modo 2 Jugadores":
                     st.session_state.mensaje_resultado_j2 = ""
                     st.rerun()
                 else:
-                    st.error("⚠️ Completa todos los campos correctamente")
+                    st.error("Completa todos los campos correctamente")
     
-    # Fase 2: Jugador 2 adivina
     elif st.session_state.fase_j2 == 2 and not st.session_state.resultado_mostrado_j2:
-        # VERIFICAR QUE HAY NÚMERO SECRETO
         if st.session_state.numero_secreto_j2 is None:
-            st.error("❌ Error: No se configuró el número secreto. Vuelve a la fase 1.")
-            if st.button("🔄 Volver a fase 1"):
+            st.error("Error: No se configuró el número secreto. Vuelve a la fase 1.")
+            if st.button("Volver a fase 1"):
                 st.session_state.fase_j2 = 1
                 st.rerun()
         else:
-            st.subheader("🔍 FASE 2: Jugador 2 (Adivina el número)")
+            st.subheader("FASE 2: Jugador 2 (Adivina el número)")
             
             col_j2_1, col_j2_2 = st.columns(2)
             
@@ -627,9 +571,9 @@ elif opcion == "👥 Modo 2 Jugadores":
                                        key="jugador2_input")
                 
                 if jugador2:
-                    st.success(f"🎯 **Reto:** Adivina el número de {st.session_state.jugador1_nombre}")
-                    st.info(f"📊 **Dificultad:** {st.session_state.dificultad_j2}")
-                    st.warning(f"⏱️ **Intentos disponibles:** {st.session_state.max_intentos_j2}")
+                    st.success(f"Reto: Adivina el número de {st.session_state.jugador1_nombre}")
+                    st.info(f"Dificultad: {st.session_state.dificultad_j2}")
+                    st.warning(f"Intentos disponibles: {st.session_state.max_intentos_j2}")
                     
                     adivinanza_j2 = st.number_input(
                         "Tu adivinanza:",
@@ -639,21 +583,20 @@ elif opcion == "👥 Modo 2 Jugadores":
                         key="adivinanza_j2_input"
                     )
                     
-                    if st.button("🎯 INTENTAR ADIVINAR", type="primary", use_container_width=True):
+                    if st.button("INTENTAR ADIVINAR", type="primary", use_container_width=True):
                         if jugador2:
                             st.session_state.jugador2_nombre = jugador2
                             st.session_state.intentos_j2 += 1
                             
                             if adivinanza_j2 == st.session_state.numero_secreto_j2:
-                                # JUGADOR 2 GANA - CORRECTO
                                 st.session_state.resultado_mostrado_j2 = True
                                 st.session_state.tipo_resultado_j2 = "correcto"
                                 st.session_state.mensaje_resultado_j2 = f"""
-                                <h3>🎉 ¡{jugador2.upper()} HA GANADO!</h3>
-                                <p><strong>✅ CORRECTO</strong> - ¡Adivinó en {st.session_state.intentos_j2} intentos!</p>
-                                <p>🎯 Número secreto: <strong>{st.session_state.numero_secreto_j2}</strong></p>
-                                <p>📊 Dificultad: {st.session_state.dificultad_j2}</p>
-                                <p>👤 Jugador 1: {st.session_state.jugador1_nombre}</p>
+                                <h3>¡{jugador2.upper()} HA GANADO!</h3>
+                                <p><strong>CORRECTO</strong> - ¡Adivinó en {st.session_state.intentos_j2} intentos!</p>
+                                <p>Número secreto: <strong>{st.session_state.numero_secreto_j2}</strong></p>
+                                <p>Dificultad: {st.session_state.dificultad_j2}</p>
+                                <p>Jugador 1: {st.session_state.jugador1_nombre}</p>
                                 """
                                 
                                 guardar_partida(
@@ -669,22 +612,20 @@ elif opcion == "👥 Modo 2 Jugadores":
                                 st.rerun()
                             
                             elif adivinanza_j2 < st.session_state.numero_secreto_j2:
-                                st.warning("📈 **MAYOR** - Intenta con un número más grande")
+                                st.warning("MAYOR - Intenta con un número más grande")
                             else:
-                                st.warning("📉 **MENOR** - Intenta con un número más pequeño")
+                                st.warning("MENOR - Intenta con un número más pequeño")
                             
-                            # Verificar fin de intentos
                             if st.session_state.intentos_j2 >= st.session_state.max_intentos_j2:
-                                # JUGADOR 2 PIERDE - INCORRECTO
                                 st.session_state.resultado_mostrado_j2 = True
                                 st.session_state.tipo_resultado_j2 = "incorrecto"
                                 st.session_state.mensaje_resultado_j2 = f"""
-                                <h3>😢 ¡SE ACABARON LOS INTENTOS!</h3>
-                                <p><strong>❌ INCORRECTO</strong> - No lograste adivinar el número.</p>
-                                <p>🎯 El número era: <strong>{st.session_state.numero_secreto_j2}</strong></p>
-                                <p>📊 Dificultad: {st.session_state.dificultad_j2}</p>
-                                <p>👤 Jugador 1: {st.session_state.jugador1_nombre}</p>
-                                <p>🔄 ¡Inténtalo de nuevo!</p>
+                                <h3>¡SE ACABARON LOS INTENTOS!</h3>
+                                <p><strong>INCORRECTO</strong> - No lograste adivinar el número.</p>
+                                <p>El número era: <strong>{st.session_state.numero_secreto_j2}</strong></p>
+                                <p>Dificultad: {st.session_state.dificultad_j2}</p>
+                                <p>Jugador 1: {st.session_state.jugador1_nombre}</p>
+                                <p>¡Inténtalo de nuevo!</p>
                                 """
                                 
                                 guardar_partida(
@@ -702,60 +643,52 @@ elif opcion == "👥 Modo 2 Jugadores":
             with col_j2_2:
                 if st.session_state.jugador2_nombre or jugador2:
                     nombre_actual = st.session_state.jugador2_nombre or jugador2
-                    st.subheader(f"📊 Estado - {nombre_actual}")
+                    st.subheader(f"Estado - {nombre_actual}")
                     
-                    # Mostrar progreso
                     st.metric(
                         "Intentos usados",
                         f"{st.session_state.intentos_j2} / {st.session_state.max_intentos_j2}"
                     )
                     
-                    # Barra de progreso
                     progreso_j2 = st.session_state.intentos_j2 / st.session_state.max_intentos_j2
                     st.progress(progreso_j2)
                     
-                    # Información
-                    st.info(f"**Contra:** {st.session_state.jugador1_nombre}")
-                    st.info(f"**Dificultad:** {st.session_state.dificultad_j2}")
+                    st.info(f"Contra: {st.session_state.jugador1_nombre}")
+                    st.info(f"Dificultad: {st.session_state.dificultad_j2}")
                     
-                    # Botón para reiniciar
-                    if st.button("🔄 Cancelar partida", use_container_width=True):
+                    if st.button("Cancelar partida", use_container_width=True):
                         st.session_state.fase_j2 = 1
                         st.session_state.numero_secreto_j2 = None
                         st.session_state.resultado_mostrado_j2 = False
                         st.rerun()
 
 # =================== ESTADÍSTICAS ===================
-elif opcion == "📊 Estadísticas":
-    st.header("📊 ESTADÍSTICAS")
+elif opcion == "Estadísticas":
+    st.header("ESTADÍSTICAS")
     
     if not st.session_state.estadisticas:
-        st.info("📭 Aún no hay partidas registradas")
+        st.info("Aún no hay partidas registradas")
         st.caption("Juega algunas partidas para ver estadísticas aquí")
         
-        # Botón para volver a jugar
         col_volver1, col_volver2 = st.columns(2)
         with col_volver1:
-            if st.button("🎮 Jugar modo solitario", type="primary", use_container_width=True):
-                st.session_state.opcion_menu = "🔢 Modo Solitario"
+            if st.button("Jugar modo solitario", type="primary", use_container_width=True):
+                st.session_state.opcion_menu = "Modo Solitario"
                 st.session_state.partida_activa_solo = True
                 st.session_state.resultado_mostrado_solo = False
                 st.rerun()
         with col_volver2:
-            if st.button("👥 Jugar con amigos", type="primary", use_container_width=True):
-                st.session_state.opcion_menu = "👥 Modo 2 Jugadores"
+            if st.button("Jugar con amigos", type="primary", use_container_width=True):
+                st.session_state.opcion_menu = "Modo 2 Jugadores"
                 st.session_state.fase_j2 = 1
                 st.session_state.resultado_mostrado_j2 = False
                 st.rerun()
     else:
-        # Convertir a DataFrame de pandas
         df = pd.DataFrame(st.session_state.estadisticas)
         
-        # Mostrar información sobre el archivo CSV
-        st.info(f"📁 **Archivo de datos:** `{ARCHIVO_ESTADISTICAS}` ({len(df)} partidas guardadas)")
+        st.info(f"Archivo de datos: {ARCHIVO_ESTADISTICAS} ({len(df)} partidas guardadas)")
         
-        # ===== FILTROS =====
-        st.subheader("🔍 Filtros")
+        st.subheader("Filtros")
         col_filtro1, col_filtro2, col_filtro3 = st.columns(3)
         
         with col_filtro1:
@@ -779,7 +712,6 @@ elif opcion == "📊 Estadísticas":
                 default=sorted(df["Resultado"].unique())
             )
         
-        # ===== APLICAR FILTROS =====
         df_filtrado = df.copy()
         
         if filtrar_modo:
@@ -789,8 +721,7 @@ elif opcion == "📊 Estadísticas":
         if filtrar_resultado:
             df_filtrado = df_filtrado[df_filtrado["Resultado"].isin(filtrar_resultado)]
         
-        # ===== MÉTRICAS RESUMEN =====
-        st.subheader("📈 Resumen general")
+        st.subheader("Resumen general")
         
         col_met1, col_met2, col_met3, col_met4, col_met5 = st.columns(5)
         
@@ -820,10 +751,8 @@ elif opcion == "📊 Estadísticas":
             else:
                 st.metric("Mejor nota", "0.00")
         
-        # ===== TABLA DETALLADA =====
-        st.subheader("📋 Historial detallado")
+        st.subheader("Historial detallado")
         
-        # Mostrar DataFrame con formato
         st.dataframe(
             df_filtrado.sort_values("Fecha", ascending=False),
             use_container_width=True,
@@ -841,14 +770,12 @@ elif opcion == "📊 Estadísticas":
             }
         )
         
-        # ===== GRÁFICOS =====
-        st.subheader("📊 Gráficos y análisis")
+        st.subheader("Gráficos y análisis")
         
-        tab_graf1, tab_graf2, tab_graf3 = st.tabs(["📈 Por dificultad", "👥 Por jugador", "📅 Evolución"])
+        tab_graf1, tab_graf2, tab_graf3 = st.tabs(["Por dificultad", "Por jugador", "Evolución"])
         
         with tab_graf1:
             if not df_filtrado.empty:
-                # Gráfico de barras por dificultad
                 stats_dif = df_filtrado.groupby("Dificultad").agg({
                     "Nota": "mean",
                     "Resultado": lambda x: (x == "Ganado").mean() * 100
@@ -857,15 +784,14 @@ elif opcion == "📊 Estadísticas":
                 col_graf1_1, col_graf1_2 = st.columns(2)
                 with col_graf1_1:
                     st.bar_chart(stats_dif["Nota"])
-                    st.caption("📊 Nota promedio por dificultad")
+                    st.caption("Nota promedio por dificultad")
                 
                 with col_graf1_2:
                     st.bar_chart(stats_dif["Resultado"])
-                    st.caption("🎯 % de victorias por dificultad")
+                    st.caption("% de victorias por dificultad")
         
         with tab_graf2:
             if not df_filtrado.empty:
-                # Estadísticas por jugador
                 jugadores = pd.concat([
                     df_filtrado[["Jugador1", "Nota", "Resultado"]].rename(columns={"Jugador1": "Jugador"}),
                     df_filtrado[df_filtrado["Jugador2"] != ""][["Jugador2", "Nota", "Resultado"]].rename(columns={"Jugador2": "Jugador"})
@@ -877,29 +803,25 @@ elif opcion == "📊 Estadísticas":
                         "Resultado": lambda x: (x == "Ganado").mean() * 100
                     }).round(2)
                     
-                    # Renombrar columnas
                     stats_jug.columns = ["Partidas", "Nota Promedio", "Mejor Nota", "% Victorias"]
                     st.dataframe(stats_jug.sort_values("Nota Promedio", ascending=False))
         
         with tab_graf3:
             if len(df_filtrado) > 1:
-                # Evolución temporal
                 df_filtrado["Fecha_dt"] = pd.to_datetime(df_filtrado["Fecha"])
                 df_filtrado = df_filtrado.sort_values("Fecha_dt")
                 
                 st.line_chart(df_filtrado.set_index("Fecha_dt")["Nota"])
-                st.caption("📈 Evolución de tu puntuación")
+                st.caption("Evolución de tu puntuación")
         
-        # ===== EXPORTAR DATOS =====
-        st.subheader("💾 Exportar datos")
+        st.subheader("Exportar datos")
         
         col_exp1, col_exp2 = st.columns(2)
         
         with col_exp1:
-            # Exportar a CSV
             csv = df_filtrado.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Descargar CSV",
+                label="Descargar CSV",
                 data=csv,
                 file_name="estadisticas_adivinanza.csv",
                 mime="text/csv",
@@ -907,86 +829,83 @@ elif opcion == "📊 Estadísticas":
             )
         
         with col_exp2:
-            # Exportar a Excel
             output = io.BytesIO()
             with pd.ExcelWriter(output, engine='openpyxl') as writer:
                 df_filtrado.to_excel(writer, index=False, sheet_name='Estadísticas')
             
             st.download_button(
-                label="📊 Descargar Excel",
+                label="Descargar Excel",
                 data=output.getvalue(),
                 file_name="estadisticas_adivinanza.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
         
-        # ===== BOTÓN LIMPIAR =====
         st.markdown("---")
         col_limpiar1, col_limpiar2, col_limpiar3 = st.columns(3)
         with col_limpiar2:
-            if st.button("🗑️ Limpiar todas las estadísticas", type="secondary", use_container_width=True):
+            if st.button("Limpiar todas las estadísticas", type="secondary", use_container_width=True):
                 st.session_state.estadisticas = []
-                # Eliminar archivo CSV
                 try:
                     if os.path.exists(ARCHIVO_ESTADISTICAS):
                         os.remove(ARCHIVO_ESTADISTICAS)
                 except:
                     pass
-                st.success("✅ Estadísticas limpiadas")
+                st.success("Estadísticas limpiadas")
                 st.rerun()
 
 # =================== INSTRUCCIONES ===================
-elif opcion == "📖 Instrucciones":
-    st.header("📖 INSTRUCCIONES DETALLADAS")
+elif opcion == "Instrucciones":
+    st.header("INSTRUCCIONES DETALLADAS")
     
-    tab_inst1, tab_inst2, tab_inst3 = st.tabs(["🎮 Cómo jugar", "⚙️ Sistema de puntuación", "🏆 Consejos"])
+    tab_inst1, tab_inst2, tab_inst3 = st.tabs(["Cómo jugar", "Sistema de puntuación", "Consejos"])
     
     with tab_inst1:
         st.markdown("""
-        ## 🎯 **OBJETIVO DEL JUEGO**
-        Adivinar un número secreto entre **1 y 1000** en la menor cantidad de intentos posible.
+        ## OBJETIVO DEL JUEGO
+        Adivinar un número secreto entre 1 y 1000 en la menor cantidad de intentos posible.
         
         ---
         
-        ## 🔢 **MODO SOLITARIO**
+        ## MODO SOLITARIO
         
         ### Paso a paso:
-        1. **👤 Ingresa tu nombre**
-        2. **⚙️ Selecciona la dificultad:**
-           - **Fácil:** 20 intentos
-           - **Medio:** 12 intentos  
-           - **Difícil:** 5 intentos
+        1. Ingresa tu nombre
+        2. Selecciona la dificultad:
+           - Fácil: 20 intentos
+           - Medio: 12 intentos  
+           - Difícil: 5 intentos
         
-        3. **🎮 Comienza a jugar:**
+        3. Comienza a jugar:
            - Ingresa tu adivinanza
-           - El sistema te dirá si el número secreto es **MAYOR** o **MENOR**
+           - El sistema te dirá si el número secreto es MAYOR o MENOR
            - ¡Sigue intentando hasta adivinarlo!
         
-        4. **🏆 Resultado:**
-           - Si adivinas: ¡**CORRECTO**! 🎉 (puedes volver a jugar)
-           - Si se acaban los intentos: ¡**INCORRECTO**! 😢 (puedes volver a intentar)
+        4. Resultado:
+           - Si adivinas: ¡CORRECTO! (puedes volver a jugar)
+           - Si se acaban los intentos: ¡INCORRECTO! (puedes volver a intentar)
         
         ---
         
-        ## 👥 **MODO 2 JUGADORES**
+        ## MODO 2 JUGADORES
         
-        ### Para el **Jugador 1** (piensa el número):
+        ### Para el Jugador 1 (piensa el número):
         1. Ingresa tu nombre
         2. Elige un número secreto (1-1000)
-        3. **¡No le digas a nadie el número!**
+        3. ¡No le digas a nadie el número!
         4. Configura la dificultad para el Jugador 2
         
-        ### Para el **Jugador 2** (adivina):
+        ### Para el Jugador 2 (adivina):
         1. Ingresa tu nombre
         2. Comienza a adivinar
-        3. Recibirás pistas: **MAYOR** o **MENOR**
+        3. Recibirás pistas: MAYOR o MENOR
         4. Intenta adivinar antes de que se acaban los intentos
-        5. **Resultado:** **CORRECTO** (ganas) o **INCORRECTO** (pierdes)
+        5. Resultado: CORRECTO (ganas) o INCORRECTO (pierdes)
         
         ---
         
-        ## 📊 **ESTADÍSTICAS**
-        - Todas tus partidas se **guardan automáticamente** en un archivo CSV
+        ## ESTADÍSTICAS
+        - Todas tus partidas se guardan automáticamente en un archivo CSV
         - Puedes filtrar por jugador, dificultad o resultado
         - Exporta tus datos a CSV o Excel
         - Los datos se conservan mientras el servidor esté activo
@@ -994,152 +913,138 @@ elif opcion == "📖 Instrucciones":
     
     with tab_inst2:
         st.markdown("""
-        ## 🏅 **SISTEMA DE PUNTUACIÓN**
+        ## SISTEMA DE PUNTUACIÓN
         
-        ### 📈 **Fórmula de cálculo:**
+        ### Fórmula de cálculo:
         ```
         NOTA = 10 × (Intentos restantes + 1) / Intentos totales
         ```
         
-        ### ✨ **Ejemplos:**
+        ### Ejemplos:
         
-        #### **Dificultad Fácil (20 intentos):**
-        - Adivinas en **5 intentos**:  
+        #### Dificultad Fácil (20 intentos):
+        - Adivinas en 5 intentos:  
           `Nota = 10 × (20-5+1)/20 = 10 × 16/20 = 8.0`
         
-        - Adivinas en **15 intentos**:  
+        - Adivinas en 15 intentos:  
           `Nota = 10 × (20-15+1)/20 = 10 × 6/20 = 3.0`
         
-        #### **Dificultad Difícil (5 intentos):**
-        - Adivinas en **3 intentos**:  
+        #### Dificultad Difícil (5 intentos):
+        - Adivinas en 3 intentos:  
           `Nota = 10 × (5-3+1)/5 = 10 × 3/5 = 6.0`
         
-        ### 🏆 **Cómo obtener mejor puntuación:**
-        1. **Adivina más rápido** (menos intentos = más puntos)
-        2. **Juega en dificultad alta** (más riesgo = más recompensa)
-        3. **Enfócate en mejorar** tu estrategia
+        ### Cómo obtener mejor puntuación:
+        1. Adivina más rápido (menos intentos = más puntos)
+        2. Juega en dificultad alta (más riesgo = más recompensa)
+        3. Enfócate en mejorar tu estrategia
         
-        ### 📊 **Escala de notas:**
-        - **9.0 - 10.0:** 🏅 **Excelente**  
-        - **7.0 - 8.9:** ⭐ **Muy bueno**  
-        - **5.0 - 6.9:** 👍 **Bueno**  
-        - **3.0 - 4.9:** 💪 **Aceptable**  
-        - **0.0 - 2.9:** 🎯 **Sigue practicando**
+        ### Escala de notas:
+        - 9.0 - 10.0: Excelente  
+        - 7.0 - 8.9: Muy bueno  
+        - 5.0 - 6.9: Bueno  
+        - 3.0 - 4.9: Aceptable  
+        - 0.0 - 2.9: Sigue practicando
         """)
     
     with tab_inst3:
         st.markdown("""
-        ## 🧠 **ESTRATEGIAS PARA GANAR**
+        ## ESTRATEGIAS PARA GANAR
         
-        ### 🔍 **Método de búsqueda binaria:**
-        1. Empieza con **500** (el punto medio)
-        2. Si es mayor, prueba **750**
-        3. Si es menor, prueba **250**
+        ### Método de búsqueda binaria:
+        1. Empieza con 500 (el punto medio)
+        2. Si es mayor, prueba 750
+        3. Si es menor, prueba 250
         4. Sigue dividiendo el rango por la mitad
         
-        ### 📊 **Estadísticas útiles:**
-        - **67%** de los números están entre 300-700
-        - Solo **10%** están en los extremos (1-100, 900-1000)
-        - El número **500** es el más común de adivinar
+        ### Estadísticas útiles:
+        - 67% de los números están entre 300-700
+        - Solo 10% están en los extremos (1-100, 900-1000)
+        - El número 500 es el más común de adivinar
         
-        ### ⚡ **Consejos rápidos:**
+        ### Consejos rápidos:
         
-        #### **Para modo solitario:**
-        - **Fácil:** Tómate tu tiempo, explora diferentes rangos
-        - **Medio:** Usa búsqueda binaria desde el inicio
-        - **Difícil:** Arriesga más, confía en tu intuición
+        #### Para modo solitario:
+        - Fácil: Tómate tu tiempo, explora diferentes rangos
+        - Medio: Usa búsqueda binaria desde el inicio
+        - Difícil: Arriesga más, confía en tu intuición
         
-        #### **Para modo 2 jugadores:**
-        - **Jugador 1:** Elige números inusuales (ej: 137, 842)
-        - **Jugador 2:** Pregunta por rangos en lugar de números específicos
+        #### Para modo 2 jugadores:
+        - Jugador 1: Elige números inusuales (ej: 137, 842)
+        - Jugador 2: Pregunta por rangos en lugar de números específicos
         
-        ### 🎯 **Patrones comunes:**
-        1. Muchos jugadores eligen números que terminan en **0, 5 o 7**
-        2. Los números **del 1 al 100** son más difíciles de adivinar
-        3. Los números **con dígitos repetidos** (333, 777) son populares
+        ### Patrones comunes:
+        1. Muchos jugadores eligen números que terminan en 0, 5 o 7
+        2. Los números del 1 al 100 son más difíciles de adivinar
+        3. Los números con dígitos repetidos (333, 777) son populares
         
-        ### 🏆 **Récords a batir:**
-        - **Nota perfecta 10.0:** Adivinar en el primer intento
-        - **Racha ganadora:** 5 partidas consecutivas ganadas
-        - **Reto extremo:** Ganar en dificultad Difícil con nota >8.0
+        ### Récords a batir:
+        - Nota perfecta 10.0: Adivinar en el primer intento
+        - Racha ganadora: 5 partidas consecutivas ganadas
+        - Reto extremo: Ganar en dificultad Difícil con nota >8.0
         """)
         
-    # Botones para jugar desde las instrucciones
     st.markdown("---")
-    st.subheader("🎮 ¿Listo para jugar?")
+    st.subheader("¿Listo para jugar?")
     
     col_inst_btn1, col_inst_btn2 = st.columns(2)
     with col_inst_btn1:
-        if st.button("🎮 **Comenzar modo solitario**", type="primary", use_container_width=True):
-            st.session_state.opcion_menu = "🔢 Modo Solitario"
+        if st.button("Comenzar modo solitario", type="primary", use_container_width=True):
+            st.session_state.opcion_menu = "Modo Solitario"
             st.session_state.partida_activa_solo = True
             st.session_state.resultado_mostrado_solo = False
             st.rerun()
     with col_inst_btn2:
-        if st.button("👥 **Comenzar con amigos**", type="primary", use_container_width=True):
-            st.session_state.opcion_menu = "👥 Modo 2 Jugadores"
+        if st.button("Comenzar con amigos", type="primary", use_container_width=True):
+            st.session_state.opcion_menu = "Modo 2 Jugadores"
             st.session_state.fase_j2 = 1
             st.session_state.resultado_mostrado_j2 = False
             st.rerun()
 
 # =================== ACERCA DE ===================
-else:  # Acerca de
-    st.header("ℹ️ ACERCA DE ESTE PROYECTO")
+else:
+    st.header("ACERCA DE ESTE PROYECTO")
     
     col_about1, col_about2 = st.columns([2, 1])
     
     with col_about1:
         st.markdown("""
-        ## 🎮 **Juego de Adivinanza - Proyecto Educativo**
+        ## Juego de Adivinanza - Proyecto Educativo
         
-        ### ✨ **Características principales:**
-        - ✅ **Dos modos de juego:** Solitario y 2 jugadores
-        - ✅ **Tres niveles de dificultad:** Fácil, Medio, Difícil
-        - ✅ **Sistema de puntuación inteligente:** Notas del 0 al 10
-        - ✅ **Estadísticas guardadas en CSV:** Datos persistentes
-        - ✅ **Interfaz moderna y responsive:** Funciona en cualquier dispositivo
+        ### Características principales:
+        - Dos modos de juego: Solitario y 2 jugadores
+        - Tres niveles de dificultad: Fácil, Medio, Difícil
+        - Sistema de puntuación inteligente: Notas del 0 al 10
+        - Estadísticas guardadas en CSV: Datos persistentes
+        - Interfaz moderna y responsive: Funciona en cualquier dispositivo
         
-        ### 🛠️ **Tecnologías utilizadas:**
-        - **Python 3** + **Streamlit** para la interfaz web
-        - **Pandas** para análisis de datos y guardado en CSV
-        - **OpenPyXL** para manejo de archivos Excel
-        - **Random** para generación de números aleatorios
+        ### Tecnologías utilizadas:
+        - Python 3 + Streamlit para la interfaz web
+        - Pandas para análisis de datos y guardado en CSV
+        - OpenPyXL para manejo de archivos Excel
+        - Random para generación de números aleatorios
         
-        ### 📚 **Propósito educativo:**
+        ### Propósito educativo:
         Este proyecto fue desarrollado como demostración de:
         - Programación en Python aplicada a juegos
         - Interfaz de usuario web con Streamlit
         - Manejo de datos y estadísticas con persistencia
         - Lógica de programación y algoritmos
         
-        ### 🎯 **Habilidades demostradas:**
-        1. **Desarrollo completo** de aplicación interactiva
-        2. **Gestión de estado** en aplicaciones web
-        3. **Persistencia de datos** con archivos CSV
-        4. **Diseño de UX/UI** intuitivo
-        5. **Documentación** completa del proyecto
-        
-        ### 👨‍💻 **Desarrollador:**
-        Proyecto creado como trabajo educativo para demostrar habilidades 
-        en programación Python y desarrollo de aplicaciones web.
-        
-        ---
-        
-        ### 📄 **Licencia:**
+        ### Licencia:
         Proyecto educativo - Libre para uso académico y personal.
         
-        ### 🔗 **Código fuente:**
+        ### Código fuente:
         Disponible para fines educativos y de aprendizaje.
         """)
     
     with col_about2:
-        st.info("**🎓 Proyecto Educativo**")
-        st.success("**✅ 100% Funcional**")
-        st.warning("**📱 Responsive Design**")
-        st.error("**⚡ Alto Rendimiento**")
+        st.info("Proyecto Educativo")
+        st.success("100% Funcional")
+        st.warning("Responsive Design")
+        st.error("Alto Rendimiento")
         
         st.markdown("---")
-        st.subheader("📊 Datos del proyecto")
+        st.subheader("Datos del proyecto")
         
         st.metric("Partidas guardadas", len(st.session_state.estadisticas))
         st.metric("Funcionalidades", "15+")
@@ -1147,16 +1052,15 @@ else:  # Acerca de
         
         st.markdown("---")
         
-        # Botones para probar el juego
-        st.subheader("🎯 Probar el juego")
-        if st.button("🎮 Probar modo solitario", type="primary", use_container_width=True):
-            st.session_state.opcion_menu = "🔢 Modo Solitario"
+        st.subheader("Probar el juego")
+        if st.button("Probar modo solitario", type="primary", use_container_width=True):
+            st.session_state.opcion_menu = "Modo Solitario"
             st.session_state.partida_activa_solo = True
             st.session_state.resultado_mostrado_solo = False
             st.rerun()
         
-        if st.button("👥 Probar con amigos", type="secondary", use_container_width=True):
-            st.session_state.opcion_menu = "👥 Modo 2 Jugadores"
+        if st.button("Probar con amigos", type="secondary", use_container_width=True):
+            st.session_state.opcion_menu = "Modo 2 Jugadores"
             st.session_state.fase_j2 = 1
             st.session_state.resultado_mostrado_j2 = False
             st.rerun()
@@ -1170,8 +1074,8 @@ st.markdown("---")
 footer_col1, footer_col2, footer_col3 = st.columns(3)
 
 with footer_col1:
-    st.caption("🎮 **Juego de Adivinanza** v2.0")
+    st.caption("Juego de Adivinanza v2.0")
 with footer_col2:
-    st.caption("💾 Datos guardados en CSV")
+    st.caption("Datos guardados en CSV")
 with footer_col3:
-    st.caption(f"🕐 {datetime.datetime.now().strftime('%H:%M')}")
+    st.caption(f"{datetime.datetime.now().strftime('%H:%M')}")
