@@ -3,23 +3,22 @@ import datetime
 import os
 import getpass
 from openpyxl import Workbook, load_workbook
-from openpyxl.chart import BarChart, Reference
 
-# --- COLORES---
+# --- COLORES (OPCIONAL) ---
 try:
     from termcolor import colored
-    COLORES_HABILITADOS = True
+    COLORES_HABILITADOS = True  # Corregido
 except ImportError:
     COLORES_HABILITADOS = False
     def colored(text, color=None, on_color=None, attrs=None):
-        return text  # Fallback: sin color
+        return text  # Fallback sin color
 
-# --- LIMPIEZA DE PANTALLA-
+# --- LIMPIEZA DE PANTALLA ---
 def limpiar_pantalla():
     """Limpia la pantalla de forma multiplataforma."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- ARCHIVO Y CONFIG ---
+# --- ARCHIVO EXCEL ---
 ARCHIVO_EXCEL = "estadisticas_adivinanza.xlsx"
 
 def inicializar_excel():
@@ -34,11 +33,7 @@ def inicializar_excel():
 
 def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto,
                     intentos_usados, max_intentos, ganado):
-    """
-    Guarda la partida en Excel y actualiza el gráfico de notas.
-    
-    Extra: Crea/actualiza un gráfico de barras con las notas de todas las partidas.
-    """
+    """Guarda la partida en Excel."""
     fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     resultado = "Ganado" if ganado else "Perdido"
     
@@ -51,37 +46,10 @@ def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto,
     ws = wb["Estadísticas"]
     ws.append([fecha, modo, jugador1, jugador2 or "", dificultad,
                numero_secreto, intentos_usados, resultado, nota])
-    
-    # - Gráfico de barras con las notas ---
-    if ws.max_row > 1:  # Solo si hay datos
-        chart = BarChart()
-        chart.type = "col"
-        chart.style = 10
-        chart.title = "Notas de las partidas"
-        chart.y_axis.title = "Nota (0-10)"
-        chart.x_axis.title = "Partida"
-        
-        data = Reference(ws, min_col=9, min_row=1, max_row=ws.max_row)  # Columna Nota
-        cats = Reference(ws, min_col=1, min_row=2, max_row=ws.max_row)  # Fechas como categorías
-        chart.add_data(data, titles_from_data=True)
-        chart.set_categories(cats)
-        chart.height = 10
-        chart.width = 20
-        
-        # Elimina gráfico anterior si existe
-        for existing_chart in ws._charts[:]:
-            ws._charts.remove(existing_chart)
-        
-        ws.add_chart(chart, "K2")
-    
     wb.save(ARCHIVO_EXCEL)
 
 def mostrar_estadisticas(filtro_usuario=None):
-    """
-    Muestra estadísticas en consola.
-    
-    Extra: Calcula promedio de nota y mejor partida.
-    """
+    """Muestra estadísticas en consola con promedio y mejor nota."""
     if not os.path.exists(ARCHIVO_EXCEL):
         print(colored("No hay estadísticas guardadas aún.", 'yellow'))
         return
@@ -102,8 +70,8 @@ def mostrar_estadisticas(filtro_usuario=None):
         return
     
     print(f"{'Fecha':20} {'Modo':10} {'Jugador1':12} {'Jugador2':12} "
-          f"{'Dif.':6} {'Nº Secreto':12} {'Intentos':8} {'Resultado':10} {'Nota':5}")
-    print("-" * 100)
+          f"{'Dif.':6} {'Nº Secreto':12} {'Intentos':8} {'Resultado':10} {'Nota':8}")
+    print("-" * 105)
     
     for row in filas:
         fecha, modo, j1, j2, dif, num, intentos, res, nota = row
@@ -111,15 +79,15 @@ def mostrar_estadisticas(filtro_usuario=None):
         num_mostrar = "***" if res == "Ganado" else num
         res_color = 'green' if res == "Ganado" else 'red'
         print(f"{fecha:20} {modo:10} {j1:12} {j2:12} {dif:6} "
-              f"{num_mostrar:12} {intentos:8} {colored(res, res_color):10} {nota:5.2f}")
+              f"{num_mostrar:12} {intentos:8} {colored(res, res_color):10} {nota:.2f}")
     
-    # --- EXTRA: Estadísticas avanzadas ---
+    # Estadísticas avanzadas
     notas_ganadas = [row[8] for row in filas if row[7] == "Ganado" and row[8] > 0]
     if notas_ganadas:
         promedio = sum(notas_ganadas) / len(notas_ganadas)
         print(colored(f"\nPromedio de nota en partidas ganadas: {promedio:.2f}", 'magenta'))
     
-    mejor = max(filas, key=lambda x: x[8] if x[8] else 0)
+    mejor = max(filas, key=lambda x: x[8] if isinstance(x[8], (int, float)) else 0)
     print(colored(f"Mejor nota: {mejor[8]:.2f} → {mejor[2]} ({mejor[0]})", 'magenta'))
 
 def elegir_dificultad():
@@ -140,7 +108,6 @@ def elegir_dificultad():
             print(colored("Opción inválida. Intenta de nuevo.", 'red'))
 
 def jugar_solitario():
-    """Modo solitario: el ordenador genera el número."""
     dificultad_texto, max_intentos = elegir_dificultad()
     
     while True:
@@ -183,7 +150,6 @@ def jugar_solitario():
                     numero_secreto, intentos, max_intentos, False)
 
 def jugar_dos_jugadores():
-    """Modo 2 jugadores: uno piensa, otro adivina."""
     print(colored("=== MODO 2 JUGADORES ===", 'magenta', attrs=['bold']))
     
     while True:
@@ -259,7 +225,6 @@ def jugar_dos_jugadores():
                     numero_secreto, intentos, max_intentos, False)
 
 def menu_estadisticas():
-    """Menú para ver estadísticas."""
     while True:
         print(colored("\n--- Menú Estadísticas ---", 'cyan'))
         print("1. Ver todas las estadísticas")
@@ -281,7 +246,6 @@ def menu_estadisticas():
             print(colored("Opción inválida.", 'red'))
 
 def menu_principal():
-    """Menú principal del juego."""
     inicializar_excel()
     
     print(colored("\n" + "="*60, 'magenta'))
@@ -293,6 +257,7 @@ def menu_principal():
         print(colored("2. Partida 2 Jugadores", 'white'))
         print(colored("3. Estadísticas", 'white'))
         print(colored("4. Salir", 'white'))
+        
         opcion = input(colored("\nElige una opción (1-4): ", 'blue')).strip()
         
         if opcion == "1":
