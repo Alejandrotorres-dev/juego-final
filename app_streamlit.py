@@ -728,7 +728,7 @@ def mostrar_inicio():
         
         **¡Adivina el número secreto entre 1 y 1000!**
         
-        ### 🏎️ MODOS DE JUEGO:
+        ### MODOS DE JUEGO:
         
         **🔹 MODO SOLITARIO**  
         • Juega contra la computadora  
