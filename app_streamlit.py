@@ -1732,9 +1732,9 @@ def main():
     st.markdown('<div class="bmw-card footer-bmw">', unsafe_allow_html=True)
     footer_col1, footer_col2, footer_col3 = st.columns(3)
     with footer_col1:
-        st.caption("🎮 JUEGO DE ADIVINANZA BMW EDITION v4.0")
+        st.caption("Juego de adivinanza v4.0")
     with footer_col2:
-        st.caption("📊 DISEÑO INSPIRADO EN BMW")
+        st.caption("Alejandro Torres Morán")
     with footer_col3:
         st.caption(f"🕐 {datetime.datetime.now().strftime('%H:%M:%S')}")
     st.markdown('</div>', unsafe_allow_html=True)
