@@ -274,6 +274,7 @@ if opcion == "Inicio":
         
         with col_btn1:
             if st.button("Jugar modo solitario", key="btn_solitario_inicio"):
+                # En Streamlit Cloud necesitamos usar st.switch_page()
                 st.session_state.opcion_menu = "Modo Solitario"
                 st.session_state.partida_activa_solo = False
                 st.session_state.resultado_mostrado_solo = False
@@ -284,6 +285,7 @@ if opcion == "Inicio":
         
         with col_btn2:
             if st.button("Jugar con amigos", key="btn_j2_inicio"):
+                # En Streamlit Cloud necesitamos usar st.switch_page()
                 st.session_state.opcion_menu = "Modo 2 Jugadores"
                 st.session_state.fase_j2 = 1
                 st.session_state.resultado_mostrado_j2 = False
@@ -291,7 +293,6 @@ if opcion == "Inicio":
                 st.session_state.numero_secreto_j2 = None
                 st.session_state.intentos_j2 = 0
                 st.rerun()
-
 # =================== MODO SOLITARIO ===================
 elif opcion == "Modo Solitario":
     st.header("MODO SOLITARIO")
