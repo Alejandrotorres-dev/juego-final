@@ -748,12 +748,13 @@ def mostrar_estadisticas():
         
         st.info(f"📁 **Archivo de datos:** {ARCHIVO_ESTADISTICAS} ({len(df)} partidas guardadas)")
         
-        # Filtros
+        # Filtros - CORREGIDO: usar list() en lugar de tolist()
         st.subheader("🔍 Filtros")
         col_filtro1, col_filtro2, col_filtro3 = st.columns(3)
         
         with col_filtro1:
-            modos = sorted(df["Modo"].unique().tolist())
+            # CORRECCIÓN APLICADA: list(df["Modo"].unique())
+            modos = sorted(list(df["Modo"].unique()))
             filtrar_modo = st.multiselect(
                 "Modo de juego:",
                 options=modos,
@@ -762,7 +763,8 @@ def mostrar_estadisticas():
             )
         
         with col_filtro2:
-            dificultades = sorted(df["Dificultad"].unique().tolist())
+            # CORRECCIÓN APLICADA: list(df["Dificultad"].unique())
+            dificultades = sorted(list(df["Dificultad"].unique()))
             filtrar_dificultad = st.multiselect(
                 "Dificultad:",
                 options=dificultades,
@@ -771,7 +773,8 @@ def mostrar_estadisticas():
             )
         
         with col_filtro3:
-            resultados = sorted(df["Resultado"].unique().tolist())
+            # CORRECCIÓN APLICADA: list(df["Resultado"].unique())
+            resultados = sorted(list(df["Resultado"].unique()))
             filtrar_resultado = st.multiselect(
                 "Resultado:",
                 options=resultados,
@@ -820,45 +823,52 @@ def mostrar_estadisticas():
         
         # Tabla de datos
         st.subheader("📋 Historial detallado")
-        st.dataframe(
-            df_filtrado.sort_values("Fecha", ascending=False),
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Fecha": st.column_config.DatetimeColumn("Fecha", format="DD/MM/YY HH:mm"),
-                "Nota": st.column_config.NumberColumn("Nota", format="%.2f", help="Puntuación de 0 a 10"),
-                "Número Secreto": st.column_config.TextColumn("Número", help="*** si fue ganado")
-            }
-        )
         
-        # Exportar datos
-        st.subheader("💾 Exportar datos")
-        col_exp1, col_exp2 = st.columns(2)
-        
-        with col_exp1:
-            csv = df_filtrado.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Descargar CSV",
-                data=csv,
-                file_name="estadisticas_adivinanza.csv",
-                mime="text/csv",
+        # Mostrar mensaje si no hay datos después de filtrar
+        if df_filtrado.empty:
+            st.warning("⚠️ No hay partidas que coincidan con los filtros seleccionados")
+            st.caption("Prueba a cambiar los filtros para ver más resultados")
+        else:
+            st.dataframe(
+                df_filtrado.sort_values("Fecha", ascending=False),
                 use_container_width=True,
-                key="btn_descargar_csv"
+                hide_index=True,
+                column_config={
+                    "Fecha": st.column_config.DatetimeColumn("Fecha", format="DD/MM/YY HH:mm"),
+                    "Nota": st.column_config.NumberColumn("Nota", format="%.2f", help="Puntuación de 0 a 10"),
+                    "Número Secreto": st.column_config.TextColumn("Número", help="*** si fue ganado")
+                }
             )
         
-        with col_exp2:
-            output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                df_filtrado.to_excel(writer, index=False, sheet_name='Estadísticas')
+        # Exportar datos - SOLO si hay datos filtrados
+        if not df_filtrado.empty:
+            st.subheader("💾 Exportar datos")
+            col_exp1, col_exp2 = st.columns(2)
             
-            st.download_button(
-                label="📥 Descargar Excel",
-                data=output.getvalue(),
-                file_name="estadisticas_adivinanza.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True,
-                key="btn_descargar_excel"
-            )
+            with col_exp1:
+                csv = df_filtrado.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Descargar CSV",
+                    data=csv,
+                    file_name="estadisticas_adivinanza.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                    key="btn_descargar_csv"
+                )
+            
+            with col_exp2:
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df_filtrado.to_excel(writer, index=False, sheet_name='Estadísticas')
+                
+                st.download_button(
+                    label="📥 Descargar Excel",
+                    data=output.getvalue(),
+                    file_name="estadisticas_adivinanza.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="btn_descargar_excel"
+                )
         
         # Limpiar estadísticas
         st.markdown("---")
