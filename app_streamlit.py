@@ -769,7 +769,7 @@ def mostrar_inicio():
         
         # BOTÓN 1: MODO SOLITARIO
         if st.button(
-            "🏎️ JUGAR MODO SOLITARIO", 
+            "JUGAR MODO SOLITARIO", 
             key="btn_solitario_inicio",
             use_container_width=True,
             help="Jugar contra la computadora"
@@ -809,7 +809,7 @@ def mostrar_inicio():
 def mostrar_solitario():
     """Muestra la página del modo solitario"""
     st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.title("🏎️ MODO SOLITARIO")
+    st.title(" MODO SOLITARIO")
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Botón para volver al inicio
