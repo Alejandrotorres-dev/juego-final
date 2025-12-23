@@ -271,23 +271,23 @@ if opcion == "Inicio":
         col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
-            if st.button("Jugar modo solitario", 
-                        type="primary", 
-                        use_container_width=True,
-                        key="btn_inicio_solo",
-                        help="Jugar contra la computadora"):
+             if st.button("Jugar modo solitario", ...):
                 st.session_state.opcion_menu = "Modo Solitario"
+                st.session_state.partida_activa_solo = False          # ← NUEVO
                 st.session_state.resultado_mostrado_solo = False
+                st.session_state.mensaje_resultado_solo = ""          # ← NUEVO
+                st.session_state.numero_secreto_solo = None           # ← NUEVO
+                st.session_state.intentos_solo = 0                    # ← NUEVO
                 st.rerun()
         
         with col_btn2:
-            if st.button("Jugar con amigos", 
-                        type="primary", 
-                        use_container_width=True,
-                        key="btn_inicio_amigos",
-                        help="Jugar con otra persona"):
+            if st.button("Jugar con amigos", ...):
                 st.session_state.opcion_menu = "Modo 2 Jugadores"
+                st.session_state.fase_j2 = 1                          # ← NUEVO
                 st.session_state.resultado_mostrado_j2 = False
+                st.session_state.mensaje_resultado_j2 = ""            # ← NUEVO
+                st.session_state.numero_secreto_j2 = None             # ← NUEVO
+                st.session_state.intentos_j2 = 0                      # ← NUEVO
                 st.rerun()
 
 # =================== MODO SOLITARIO ===================
