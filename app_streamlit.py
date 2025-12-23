@@ -114,6 +114,7 @@ if 'opcion_menu' not in st.session_state:
 if 'estadisticas' not in st.session_state:
     st.session_state.estadisticas = cargar_estadisticas_desde_csv()
 
+# Inicializar variables para modo solitario
 if 'numero_secreto_solo' not in st.session_state:
     st.session_state.numero_secreto_solo = None
 if 'intentos_solo' not in st.session_state:
@@ -133,6 +134,7 @@ if 'mensaje_resultado_solo' not in st.session_state:
 if 'tipo_resultado_solo' not in st.session_state:
     st.session_state.tipo_resultado_solo = ""
 
+# Inicializar variables para modo 2 jugadores
 if 'numero_secreto_j2' not in st.session_state:
     st.session_state.numero_secreto_j2 = None
 if 'intentos_j2' not in st.session_state:
@@ -271,23 +273,23 @@ if opcion == "Inicio":
         col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
-             if st.button("Jugar modo solitario", ...):
+            if st.button("Jugar modo solitario", key="btn_solitario_inicio"):
                 st.session_state.opcion_menu = "Modo Solitario"
-                st.session_state.partida_activa_solo = False          # ← NUEVO
+                st.session_state.partida_activa_solo = False
                 st.session_state.resultado_mostrado_solo = False
-                st.session_state.mensaje_resultado_solo = ""          # ← NUEVO
-                st.session_state.numero_secreto_solo = None           # ← NUEVO
-                st.session_state.intentos_solo = 0                    # ← NUEVO
+                st.session_state.mensaje_resultado_solo = ""
+                st.session_state.numero_secreto_solo = None
+                st.session_state.intentos_solo = 0
                 st.rerun()
         
         with col_btn2:
-            if st.button("Jugar con amigos", ...):
+            if st.button("Jugar con amigos", key="btn_j2_inicio"):
                 st.session_state.opcion_menu = "Modo 2 Jugadores"
-                st.session_state.fase_j2 = 1                          # ← NUEVO
+                st.session_state.fase_j2 = 1
                 st.session_state.resultado_mostrado_j2 = False
-                st.session_state.mensaje_resultado_j2 = ""            # ← NUEVO
-                st.session_state.numero_secreto_j2 = None             # ← NUEVO
-                st.session_state.intentos_j2 = 0                      # ← NUEVO
+                st.session_state.mensaje_resultado_j2 = ""
+                st.session_state.numero_secreto_j2 = None
+                st.session_state.intentos_j2 = 0
                 st.rerun()
 
 # =================== MODO SOLITARIO ===================
@@ -350,7 +352,7 @@ elif opcion == "Modo Solitario":
             - ¡Buena suerte!
             """)
             
-            if st.button("COMENZAR PARTIDA", type="primary", use_container_width=True):
+            if st.button("COMENZAR PARTIDA", type="primary", use_container_width=True, key="btn_comenzar_solo"):
                 if nombre:
                     st.session_state.jugador_solo = nombre
                     st.session_state.dificultad_solo = dificultad_opcion
@@ -386,7 +388,7 @@ elif opcion == "Modo Solitario":
             
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                if st.button("INTENTAR", type="primary", use_container_width=True):
+                if st.button("INTENTAR", type="primary", use_container_width=True, key="btn_intentar_solo"):
                     st.session_state.intentos_solo += 1
                     
                     if st.session_state.numero_secreto_solo is None:
@@ -443,7 +445,7 @@ elif opcion == "Modo Solitario":
                         st.rerun()
             
             with col_btn2:
-                if st.button("Cancelar partida", use_container_width=True):
+                if st.button("Cancelar partida", use_container_width=True, key="btn_cancelar_solo"):
                     st.session_state.partida_activa_solo = False
                     st.session_state.numero_secreto_solo = None
                     st.session_state.resultado_mostrado_solo = False
@@ -483,14 +485,14 @@ elif opcion == "Modo 2 Jugadores":
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("Jugar otra partida", type="primary", use_container_width=True):
+            if st.button("Jugar otra partida", type="primary", use_container_width=True, key="btn_otra_j2"):
                 st.session_state.resultado_mostrado_j2 = False
                 st.session_state.mensaje_resultado_j2 = ""
                 st.session_state.fase_j2 = 1
                 st.session_state.numero_secreto_j2 = None
                 st.rerun()
         with col2:
-            if st.button("Ver estadísticas", use_container_width=True):
+            if st.button("Ver estadísticas", use_container_width=True, key="btn_estadisticas_j2"):
                 st.session_state.opcion_menu = "Estadísticas"
                 st.rerun()
         
@@ -540,7 +542,7 @@ elif opcion == "Modo 2 Jugadores":
             
             st.markdown("---")
             
-            if st.button("REGISTRAR NÚMERO", type="primary", use_container_width=True):
+            if st.button("REGISTRAR NÚMERO", type="primary", use_container_width=True, key="btn_registrar_j2"):
                 if jugador1 and 1 <= numero_secreto <= 1000:
                     st.session_state.jugador1_nombre = jugador1
                     st.session_state.numero_secreto_j2 = numero_secreto
@@ -557,7 +559,7 @@ elif opcion == "Modo 2 Jugadores":
     elif st.session_state.fase_j2 == 2 and not st.session_state.resultado_mostrado_j2:
         if st.session_state.numero_secreto_j2 is None:
             st.error("Error: No se configuró el número secreto. Vuelve a la fase 1.")
-            if st.button("Volver a fase 1"):
+            if st.button("Volver a fase 1", key="btn_volver_fase1"):
                 st.session_state.fase_j2 = 1
                 st.rerun()
         else:
@@ -583,7 +585,7 @@ elif opcion == "Modo 2 Jugadores":
                         key="adivinanza_j2_input"
                     )
                     
-                    if st.button("INTENTAR ADIVINAR", type="primary", use_container_width=True):
+                    if st.button("INTENTAR ADIVINAR", type="primary", use_container_width=True, key="btn_intentar_j2"):
                         if jugador2:
                             st.session_state.jugador2_nombre = jugador2
                             st.session_state.intentos_j2 += 1
@@ -656,7 +658,7 @@ elif opcion == "Modo 2 Jugadores":
                     st.info(f"Contra: {st.session_state.jugador1_nombre}")
                     st.info(f"Dificultad: {st.session_state.dificultad_j2}")
                     
-                    if st.button("Cancelar partida", use_container_width=True):
+                    if st.button("Cancelar partida", use_container_width=True, key="btn_cancelar_j2"):
                         st.session_state.fase_j2 = 1
                         st.session_state.numero_secreto_j2 = None
                         st.session_state.resultado_mostrado_j2 = False
@@ -672,13 +674,13 @@ elif opcion == "Estadísticas":
         
         col_volver1, col_volver2 = st.columns(2)
         with col_volver1:
-            if st.button("Jugar modo solitario", type="primary", use_container_width=True):
+            if st.button("Jugar modo solitario", type="primary", use_container_width=True, key="btn_solitario_estadisticas"):
                 st.session_state.opcion_menu = "Modo Solitario"
-                st.session_state.partida_activa_solo = True
+                st.session_state.partida_activa_solo = False
                 st.session_state.resultado_mostrado_solo = False
                 st.rerun()
         with col_volver2:
-            if st.button("Jugar con amigos", type="primary", use_container_width=True):
+            if st.button("Jugar con amigos", type="primary", use_container_width=True, key="btn_j2_estadisticas"):
                 st.session_state.opcion_menu = "Modo 2 Jugadores"
                 st.session_state.fase_j2 = 1
                 st.session_state.resultado_mostrado_j2 = False
@@ -695,21 +697,24 @@ elif opcion == "Estadísticas":
             filtrar_modo = st.multiselect(
                 "Modo de juego:",
                 options=sorted(df["Modo"].unique()),
-                default=sorted(df["Modo"].unique())
+                default=sorted(df["Modo"].unique()),
+                key="filtro_modo"
             )
         
         with col_filtro2:
             filtrar_dificultad = st.multiselect(
                 "Dificultad:",
                 options=sorted(df["Dificultad"].unique()),
-                default=sorted(df["Dificultad"].unique())
+                default=sorted(df["Dificultad"].unique()),
+                key="filtro_dificultad"
             )
         
         with col_filtro3:
             filtrar_resultado = st.multiselect(
                 "Resultado:",
                 options=sorted(df["Resultado"].unique()),
-                default=sorted(df["Resultado"].unique())
+                default=sorted(df["Resultado"].unique()),
+                key="filtro_resultado"
             )
         
         df_filtrado = df.copy()
@@ -825,7 +830,8 @@ elif opcion == "Estadísticas":
                 data=csv,
                 file_name="estadisticas_adivinanza.csv",
                 mime="text/csv",
-                use_container_width=True
+                use_container_width=True,
+                key="btn_descargar_csv"
             )
         
         with col_exp2:
@@ -838,13 +844,14 @@ elif opcion == "Estadísticas":
                 data=output.getvalue(),
                 file_name="estadisticas_adivinanza.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True
+                use_container_width=True,
+                key="btn_descargar_excel"
             )
         
         st.markdown("---")
         col_limpiar1, col_limpiar2, col_limpiar3 = st.columns(3)
         with col_limpiar2:
-            if st.button("Limpiar todas las estadísticas", type="secondary", use_container_width=True):
+            if st.button("Limpiar todas las estadísticas", type="secondary", use_container_width=True, key="btn_limpiar_estadisticas"):
                 st.session_state.estadisticas = []
                 try:
                     if os.path.exists(ARCHIVO_ESTADISTICAS):
@@ -988,13 +995,13 @@ elif opcion == "Instrucciones":
     
     col_inst_btn1, col_inst_btn2 = st.columns(2)
     with col_inst_btn1:
-        if st.button("Comenzar modo solitario", type="primary", use_container_width=True):
+        if st.button("Comenzar modo solitario", type="primary", use_container_width=True, key="btn_solitario_inst"):
             st.session_state.opcion_menu = "Modo Solitario"
-            st.session_state.partida_activa_solo = True
+            st.session_state.partida_activa_solo = False
             st.session_state.resultado_mostrado_solo = False
             st.rerun()
     with col_inst_btn2:
-        if st.button("Comenzar con amigos", type="primary", use_container_width=True):
+        if st.button("Comenzar con amigos", type="primary", use_container_width=True, key="btn_j2_inst"):
             st.session_state.opcion_menu = "Modo 2 Jugadores"
             st.session_state.fase_j2 = 1
             st.session_state.resultado_mostrado_j2 = False
@@ -1053,13 +1060,13 @@ else:
         st.markdown("---")
         
         st.subheader("Probar el juego")
-        if st.button("Probar modo solitario", type="primary", use_container_width=True):
+        if st.button("Probar modo solitario", type="primary", use_container_width=True, key="btn_probar_solo"):
             st.session_state.opcion_menu = "Modo Solitario"
-            st.session_state.partida_activa_solo = True
+            st.session_state.partida_activa_solo = False
             st.session_state.resultado_mostrado_solo = False
             st.rerun()
         
-        if st.button("Probar con amigos", type="secondary", use_container_width=True):
+        if st.button("Probar con amigos", type="secondary", use_container_width=True, key="btn_probar_j2"):
             st.session_state.opcion_menu = "Modo 2 Jugadores"
             st.session_state.fase_j2 = 1
             st.session_state.resultado_mostrado_j2 = False
