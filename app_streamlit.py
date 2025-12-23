@@ -716,8 +716,8 @@ def reiniciar_dos_jugadores():
 def mostrar_inicio():
     """Muestra la página principal"""
     st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.markdown('<div class="emoji-grande">🏁</div>', unsafe_allow_html=True)
-    st.title("JUEGO DE ADIVINANZA BMW EDITION")
+    st.markdown('<div class="emoji-grande"></div>', unsafe_allow_html=True)
+    st.title("JUEGO DE ADIVINANZA")
     st.markdown('</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
