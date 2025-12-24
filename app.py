@@ -8,30 +8,29 @@ from io import BytesIO
 
 # =================== CONFIGURACIÓN INICIAL ===================
 st.set_page_config(
-    page_title="Juego de Adivinanza BMW Edition",
+    page_title="Juego de Adivinanza",
     page_icon="🏁",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# =================== CSS BMW STYLE ===================
-bmw_css = """
+# =================== CSS STYLE ===================
+app_css = """
 <style>
-    /* Variables de diseño BMW */
+    /* Variables de diseño */
     :root {
-        --bmw-black: #000000;
-        --bmw-dark: #0D0D0D;
-        --bmw-gray: #1A1A1A;
-        --bmw-light-gray: #2D2D2D;
-        --bmw-blue: #0066B3;
-        --bmw-blue-light: #0099FF;
-        --bmw-blue-dark: #004C8F;
-        --bmw-red: #E4002B;
-        --bmw-white: #FFFFFF;
-        --bmw-silver: #CCCCCC;
-        --bmw-border: #333333;
-        --bmw-shadow: rgba(0, 0, 0, 0.3);
-        --bmw-glow: rgba(0, 153, 255, 0.3);
+        --primary-color: #0066B3;
+        --primary-light: #0099FF;
+        --primary-dark: #004C8F;
+        --success-color: #00A86B;
+        --error-color: #E4002B;
+        --warning-color: #FFC107;
+        --dark-bg: #0D0D0D;
+        --medium-bg: #1A1A1A;
+        --light-bg: #2D2D2D;
+        --text-light: #FFFFFF;
+        --text-muted: #CCCCCC;
+        --border-color: #333333;
     }
     
     /* Ocultar elementos de Streamlit */
@@ -43,13 +42,11 @@ bmw_css = """
     [data-testid="stToolbar"] {display:none;}
     [data-testid="stDecoration"] {display:none;}
     [data-testid="stStatusWidget"] {display:none;}
-    .css-1lsmgbg {display: none;}
     
-    /* Fondo principal estilo BMW */
+    /* Fondo principal */
     .main {
-        background: linear-gradient(135deg, var(--bmw-black) 0%, var(--bmw-dark) 50%, var(--bmw-gray) 100%) !important;
-        color: var(--bmw-white);
-        font-family: 'BMW Type Next', 'Arial', sans-serif;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%) !important;
+        color: var(--text-light);
         min-height: 100vh;
     }
     
@@ -60,19 +57,16 @@ bmw_css = """
         padding-bottom: 0rem;
     }
     
-    /* Títulos BMW */
+    /* Títulos */
     h1, h2, h3, h4 {
-        font-family: 'BMW Type Next Bold', 'Arial Black', sans-serif;
         font-weight: 700;
-        color: var(--bmw-white);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        color: var(--text-light);
         margin-top: 0;
     }
     
     h1 {
         font-size: 48px;
-        background: linear-gradient(90deg, var(--bmw-white), var(--bmw-blue-light));
+        background: linear-gradient(90deg, var(--text-light), var(--primary-light));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 24px;
@@ -89,146 +83,94 @@ bmw_css = """
         transform: translateX(-50%);
         width: 100px;
         height: 4px;
-        background: linear-gradient(90deg, var(--bmw-blue), var(--bmw-blue-light));
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         border-radius: 2px;
     }
     
-    h2 {
-        font-size: 32px;
-        margin-bottom: 20px;
-        color: var(--bmw-blue-light);
-        border-left: 4px solid var(--bmw-blue);
-        padding-left: 15px;
-    }
-    
-    h3 {
-        font-size: 24px;
-        color: var(--bmw-silver);
-        border-bottom: 2px solid var(--bmw-border);
-        padding-bottom: 10px;
-    }
-    
-    /* Sidebar estilo BMW */
-    .css-1d391kg, .css-12oz5g7 {
-        background: linear-gradient(180deg, var(--bmw-dark) 0%, var(--bmw-gray) 100%) !important;
-        border-right: 1px solid var(--bmw-border) !important;
-    }
-    
-    /* Tarjetas BMW */
-    .bmw-card {
-        background: linear-gradient(145deg, var(--bmw-gray) 0%, var(--bmw-light-gray) 100%);
+    /* Tarjetas */
+    .app-card {
+        background: linear-gradient(145deg, var(--medium-bg) 0%, var(--light-bg) 100%);
         border-radius: 8px;
         padding: 25px;
         margin-bottom: 20px;
-        border: 1px solid var(--bmw-border);
-        box-shadow: 0 4px 15px var(--bmw-shadow);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
     
-    .bmw-card:before {
+    .app-card:before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 4px;
         height: 100%;
-        background: linear-gradient(180deg, var(--bmw-blue), var(--bmw-blue-light));
+        background: linear-gradient(180deg, var(--primary-color), var(--primary-light));
     }
     
-    .bmw-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px var(--bmw-shadow), 0 0 15px var(--bmw-glow);
-        border-color: var(--bmw-blue);
-    }
-    
-    /* Botones BMW */
+    /* Botones */
     .stButton > button {
-        background: linear-gradient(135deg, var(--bmw-blue) 0%, var(--bmw-blue-dark) 100%) !important;
-        color: var(--bmw-white) !important;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+        color: var(--text-light) !important;
         border: none !important;
         border-radius: 4px !important;
         padding: 12px 28px !important;
         font-size: 14px !important;
         font-weight: 600 !important;
-        font-family: 'BMW Type Next', 'Arial', sans-serif !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 4px 12px rgba(0, 102, 179, 0.3) !important;
         letter-spacing: 0.5px;
-        text-transform: uppercase;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stButton > button:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: 0.5s;
     }
     
     .stButton > button:hover {
-        background: linear-gradient(135deg, var(--bmw-blue-light) 0%, var(--bmw-blue) 100%) !important;
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%) !important;
         transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(0, 153, 255, 0.4) !important;
     }
     
-    .stButton > button:hover:before {
-        left: 100%;
+    /* Métricas */
+    .metric-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, var(--light-bg) 100%);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        min-height: 120px;
+        position: relative;
+        overflow: hidden;
     }
     
-    .stButton > button:active {
-        transform: translateY(1px) !important;
-        box-shadow: 0 2px 10px rgba(0, 102, 179, 0.4) !important;
+    .metric-value {
+        font-size: 42px;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--primary-light), var(--text-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        margin-bottom: 5px;
     }
     
-    /* Botones secundarios */
-    .stButton > button[kind="secondary"] {
-        background: transparent !important;
-        color: var(--bmw-blue-light) !important;
-        border: 2px solid var(--bmw-blue) !important;
-        box-shadow: none !important;
+    .metric-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
     }
     
-    .stButton > button[kind="secondary"]:hover {
-        background: rgba(0, 102, 179, 0.1) !important;
-        border-color: var(--bmw-blue-light) !important;
-        color: var(--bmw-white) !important;
-    }
-    
-    /* Botones de éxito/error */
-    .stButton > button.success-btn {
-        background: linear-gradient(135deg, #00A86B 0%, #008552 100%) !important;
-    }
-    
-    .stButton > button.error-btn {
-        background: linear-gradient(135deg, var(--bmw-red) 0%, #B3001E 100%) !important;
-    }
-    
-    /* Mensajes BMW */
+    /* Mensajes */
     .mensaje-correcto {
         background: linear-gradient(135deg, rgba(0, 168, 107, 0.1) 0%, rgba(0, 133, 82, 0.05) 100%);
         border: 2px solid rgba(0, 168, 107, 0.3);
         border-radius: 8px;
         padding: 25px;
         margin: 20px 0;
-        color: var(--bmw-white);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .mensaje-correcto:before {
-        content: '🏆';
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 40px;
-        opacity: 0.2;
+        color: var(--text-light);
     }
     
     .mensaje-incorrecto {
@@ -237,121 +179,53 @@ bmw_css = """
         border-radius: 8px;
         padding: 25px;
         margin: 20px 0;
-        color: var(--bmw-white);
-        position: relative;
-        overflow: hidden;
+        color: var(--text-light);
     }
     
-    .mensaje-incorrecto:before {
-        content: '⚡';
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 40px;
-        opacity: 0.2;
-    }
-    
-    /* Métricas BMW */
-    .metric-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background: linear-gradient(135deg, var(--bmw-dark) 0%, var(--bmw-light-gray) 100%);
-        border-radius: 8px;
-        border: 1px solid var(--bmw-border);
-        min-height: 120px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .metric-container:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--bmw-blue), var(--bmw-blue-light));
-    }
-    
-    .metric-value {
-        font-size: 42px;
-        font-weight: 700;
-        background: linear-gradient(90deg, var(--bmw-blue-light), var(--bmw-white));
+    /* Número secreto */
+    .numero-secreto {
+        font-size: 56px;
+        font-weight: 800;
+        background: linear-gradient(90deg, var(--primary-light), #FFD700);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        line-height: 1;
-        margin-bottom: 5px;
-        font-family: 'BMW Type Next Bold', sans-serif;
+        text-align: center;
+        margin: 20px 0;
+        text-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
     }
     
-    .metric-label {
-        font-size: 12px;
-        color: var(--bmw-silver);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 600;
+    /* Separadores */
+    .separator {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        margin: 30px 0;
     }
     
-    /* Tablas BMW */
+    /* Tablas */
     .dataframe {
         width: 100%;
         border-collapse: collapse;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 4px 15px var(--bmw-shadow);
-        font-family: 'BMW Type Next', sans-serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
     
     .dataframe th {
-        background: linear-gradient(135deg, var(--bmw-blue-dark) 0%, var(--bmw-blue) 100%);
-        color: var(--bmw-white);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+        color: var(--text-light);
         font-weight: 600;
         padding: 16px;
         text-align: left;
-        border: none;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
     
     .dataframe td {
         padding: 14px 16px;
-        border-bottom: 1px solid var(--bmw-border);
-        color: var(--bmw-silver);
-        font-size: 14px;
-        background: var(--bmw-light-gray);
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-muted);
+        background: var(--light-bg);
     }
     
-    .dataframe tr:hover {
-        background: rgba(0, 102, 179, 0.1);
-    }
-    
-    /* Inputs BMW */
-    .stTextInput > div > div > input,
-    .stNumberInput > div > div > input,
-    .stSelectbox > div > div {
-        background: var(--bmw-dark) !important;
-        color: var(--bmw-white) !important;
-        border-radius: 4px !important;
-        border: 1px solid var(--bmw-border) !important;
-        padding: 10px 14px !important;
-        font-size: 14px !important;
-        font-family: 'BMW Type Next', sans-serif !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .stTextInput > div > div > input:focus,
-    .stNumberInput > div > div > input:focus,
-    .stSelectbox > div > div:focus {
-        border-color: var(--bmw-blue) !important;
-        box-shadow: 0 0 0 3px var(--bmw-glow) !important;
-        outline: none !important;
-    }
-    
-    /* Badges BMW */
+    /* Badges */
     .badge {
         display: inline-block;
         padding: 5px 12px;
@@ -361,7 +235,6 @@ bmw_css = """
         text-transform: uppercase;
         letter-spacing: 1px;
         margin: 0 4px;
-        font-family: 'BMW Type Next', sans-serif;
     }
     
     .badge-success {
@@ -372,151 +245,28 @@ bmw_css = """
     
     .badge-error {
         background: rgba(228, 0, 43, 0.2);
-        color: var(--bmw-red);
+        color: var(--error-color);
         border: 1px solid rgba(228, 0, 43, 0.4);
-    }
-    
-    .badge-warning {
-        background: rgba(255, 193, 7, 0.2);
-        color: #FFC107;
-        border: 1px solid rgba(255, 193, 7, 0.4);
-    }
-    
-    .badge-info {
-        background: rgba(0, 102, 179, 0.2);
-        color: var(--bmw-blue-light);
-        border: 1px solid rgba(0, 102, 179, 0.4);
-    }
-    
-    /* Alertas BMW */
-    .stAlert {
-        border-radius: 8px;
-        border-left: none;
-        padding: 16px 20px;
-        background: var(--bmw-light-gray);
-        border: 1px solid var(--bmw-border);
-        box-shadow: 0 4px 12px var(--bmw-shadow);
-        font-family: 'BMW Type Next', sans-serif;
-    }
-    
-    /* Progress bar BMW */
-    .stProgress > div > div > div {
-        background: linear-gradient(90deg, var(--bmw-blue), var(--bmw-blue-light));
-        border-radius: 4px;
-    }
-    
-    /* Separadores */
-    .separator {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--bmw-border), transparent);
-        margin: 30px 0;
-    }
-    
-    /* Animaciones */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(0, 153, 255, 0.4);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(0, 153, 255, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(0, 153, 255, 0);
-        }
-    }
-    
-    .bmw-card {
-        animation: fadeInUp 0.6s ease-out;
     }
     
     /* Contenedor de juego */
     .contenedor-juego {
-        background: linear-gradient(145deg, var(--bmw-dark) 0%, var(--bmw-gray) 100%);
+        background: linear-gradient(145deg, var(--dark-bg) 0%, var(--medium-bg) 100%);
         border-radius: 8px;
         padding: 25px;
         margin: 20px 0;
-        border: 1px solid var(--bmw-border);
-        box-shadow: 0 4px 20px var(--bmw-shadow);
-        animation: fadeInUp 0.5s ease;
-        position: relative;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
-    .contenedor-juego:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--bmw-blue), var(--bmw-blue-light));
-    }
-    
-    /* Efectos especiales */
-    .numero-secreto {
-        font-size: 56px;
-        font-weight: 800;
-        background: linear-gradient(90deg, var(--bmw-blue-light), #FFD700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin: 20px 0;
-        font-family: 'BMW Type Next Bold', sans-serif;
-        text-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
-        animation: pulse 2s infinite;
-    }
-    
-    .emoji-grande {
-        font-size: 48px;
-        text-align: center;
-        margin: 20px 0;
-        text-shadow: 0 0 10px rgba(0, 153, 255, 0.5);
-    }
-    
-    /* Grid responsive */
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin: 20px 0;
-    }
-    
-    /* Chip BMW */
-    .chip {
-        display: inline-block;
-        padding: 6px 15px;
-        background: var(--bmw-dark);
-        border: 1px solid var(--bmw-border);
-        border-radius: 20px;
-        font-size: 12px;
-        color: var(--bmw-silver);
-        margin: 5px;
-        transition: all 0.3s ease;
-    }
-    
-    .chip:hover {
-        border-color: var(--bmw-blue);
-        color: var(--bmw-blue-light);
-    }
-    
-    /* Footer BMW */
-    .footer-bmw {
-        background: var(--bmw-black);
-        border-top: 1px solid var(--bmw-border);
+    /* Footer */
+    .footer-app {
+        background: var(--dark-bg);
+        border-top: 1px solid var(--border-color);
         padding: 20px;
         margin-top: 40px;
         text-align: center;
-        color: var(--bmw-silver);
+        color: var(--text-muted);
         font-size: 12px;
     }
     
@@ -526,71 +276,27 @@ bmw_css = """
             font-size: 36px;
         }
         
-        h2 {
-            font-size: 24px;
-        }
-        
         .metric-value {
             font-size: 32px;
         }
         
-        .bmw-card {
+        .app-card {
             padding: 20px;
         }
         
         .numero-secreto {
             font-size: 42px;
         }
-        
-        .stButton > button {
-            padding: 10px 20px !important;
-            font-size: 13px !important;
-        }
-    }
-    
-    /* Estilo para selectores y multiselect */
-    .stSelectbox > div > div {
-        background: var(--bmw-dark) !important;
-        color: var(--bmw-white) !important;
-    }
-    
-    .stMultiSelect > div > div {
-        background: var(--bmw-dark) !important;
-        color: var(--bmw-white) !important;
-    }
-    
-    /* Placeholder styling */
-    ::placeholder {
-        color: var(--bmw-silver) !important;
-        opacity: 0.7 !important;
-    }
-    
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: var(--bmw-dark);
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: var(--bmw-blue);
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--bmw-blue-light);
     }
 </style>
 """
 
 # Aplicar el CSS
-st.markdown(bmw_css, unsafe_allow_html=True)
+st.markdown(app_css, unsafe_allow_html=True)
 
 # =================== INICIALIZACIÓN DE SESSION STATE ===================
 
-# Variable CRÍTICA para navegación - controla qué página mostrar
+# Variable para navegación
 if 'pagina_actual' not in st.session_state:
     st.session_state.pagina_actual = "inicio"
 
@@ -608,7 +314,7 @@ if 'max_intentos_solo' not in st.session_state:
 if 'partida_activa_solo' not in st.session_state:
     st.session_state.partida_activa_solo = False
 if 'resultado_solo' not in st.session_state:
-    st.session_state.resultado_solo = None  # "ganado", "perdido", o None
+    st.session_state.resultado_solo = None
 
 # Variables para modo 2 JUGADORES
 if 'numero_secreto_j2' not in st.session_state:
@@ -624,9 +330,9 @@ if 'dificultad_j2' not in st.session_state:
 if 'max_intentos_j2' not in st.session_state:
     st.session_state.max_intentos_j2 = 20
 if 'fase_j2' not in st.session_state:
-    st.session_state.fase_j2 = 1  # 1: Jugador1 elige, 2: Jugador2 adivina
+    st.session_state.fase_j2 = 1
 if 'resultado_j2' not in st.session_state:
-    st.session_state.resultado_j2 = None  # "ganado", "perdido", o None
+    st.session_state.resultado_j2 = None
 
 # Estadísticas
 ARCHIVO_ESTADISTICAS = "estadisticas_partidas.csv"
@@ -649,7 +355,7 @@ def guardar_estadisticas():
             df = pd.DataFrame(st.session_state.estadisticas)
             df.to_csv(ARCHIVO_ESTADISTICAS, index=False)
     except Exception as e:
-        pass  # Silenciar errores en la nube
+        pass
 
 def guardar_partida(modo, jugador1, jugador2, dificultad, numero_secreto, intentos, ganado):
     """Guarda una partida en las estadísticas"""
@@ -687,7 +393,7 @@ def sugerir_dificultad(numero):
         return "Cerca del centro, más fácil de adivinar."
 
 def navegar_a(pagina):
-    """Función para cambiar de página - CRÍTICA para funcionamiento en web"""
+    """Función para cambiar de página"""
     st.session_state.pagina_actual = pagina
 
 def reiniciar_solitario():
@@ -715,8 +421,7 @@ def reiniciar_dos_jugadores():
 
 def mostrar_inicio():
     """Muestra la página principal"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.markdown('<div class="emoji-grande"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
     st.title("JUEGO DE ADIVINANZA")
     st.markdown('</div>', unsafe_allow_html=True)
     
@@ -733,21 +438,14 @@ def mostrar_inicio():
         **🔹 MODO SOLITARIO**  
         • Juega contra la computadora  
         • Elige entre 3 niveles de dificultad  
-        • Intenta adivinar en pocos intentos
         
         **🔹 MODO 2 JUGADORES**  
         • Un jugador piensa el número  
         • Otro intenta adivinarlo  
         • ¡Perfecto para jugar con amigos!
-        
-        ### 📊 SISTEMA DE PUNTUACIÓN:
-        • + puntos por adivinar rápido  
-        • + puntos por mayor dificultad  
-        • Nota final de 0 a 10
         """)
     
     with col2:
-        # Mostrar récord
         st.markdown("### 🏆 RÉCORD ACTUAL")
         if st.session_state.estadisticas:
             mejor_partida = max(st.session_state.estadisticas, key=lambda x: x["Nota"])
@@ -761,30 +459,25 @@ def mostrar_inicio():
             st.markdown(f'<div class="metric-value">0.00</div>', unsafe_allow_html=True)
             st.markdown('<div class="metric-label">MEJOR NOTA</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
-            st.caption("¡SÉ EL PRIMERO EN ESTABLECER UN RÉCORD!")
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
         st.markdown("### 🚀 COMENZAR A JUGAR")
         
-        # BOTÓN 1: MODO SOLITARIO
         if st.button(
             "JUGAR MODO SOLITARIO", 
             key="btn_solitario_inicio",
-            use_container_width=True,
-            help="Jugar contra la computadora"
+            use_container_width=True
         ):
             reiniciar_solitario()
             navegar_a("solitario")
             st.rerun()
         
-        # BOTÓN 2: MODO 2 JUGADORES
         if st.button(
             "👥 JUGAR CON AMIGOS", 
             key="btn_j2_inicio",
             use_container_width=True,
-            type="secondary",
-            help="Jugar con otra persona"
+            type="secondary"
         ):
             reiniciar_dos_jugadores()
             navegar_a("dos_jugadores")
@@ -792,7 +485,6 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        # Otros accesos rápidos
         st.markdown("### 📍 ACCESOS RÁPIDOS")
         col_acc1, col_acc2 = st.columns(2)
         with col_acc1:
@@ -808,11 +500,10 @@ def mostrar_inicio():
 
 def mostrar_solitario():
     """Muestra la página del modo solitario"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.title(" MODO SOLITARIO")
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
+    st.title("🎮 MODO SOLITARIO")
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Botón para volver al inicio
     col_volver, _ = st.columns([1, 3])
     with col_volver:
         if st.button("← VOLVER AL INICIO", key="btn_volver_solo", type="secondary"):
@@ -821,7 +512,6 @@ def mostrar_solitario():
     
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    # Mostrar resultado si existe
     if st.session_state.resultado_solo is not None:
         if st.session_state.resultado_solo == "ganado":
             st.markdown(f"""
@@ -843,7 +533,6 @@ def mostrar_solitario():
             </div>
             """, unsafe_allow_html=True)
         
-        st.markdown('<div class="grid-container">', unsafe_allow_html=True)
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
             if st.button("🔄 JUGAR OTRA PARTIDA", use_container_width=True, key="btn_reiniciar_solo"):
@@ -853,13 +542,11 @@ def mostrar_solitario():
             if st.button("📊 VER ESTADÍSTICAS", use_container_width=True, type="secondary", key="btn_estad_solo"):
                 navegar_a("estadisticas")
                 st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    # Configuración de nueva partida
     if not st.session_state.partida_activa_solo:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.subheader("⚙️ CONFIGURA TU PARTIDA")
         
         col_config1, col_config2 = st.columns(2)
@@ -901,9 +588,6 @@ def mostrar_solitario():
             
             ### PISTAS:
             • TE DIRÉ SI EL NÚMERO ES **MAYOR** O **MENOR**
-            • ¡USA LA ESTRATEGIA DE BÚSQUEDA BINARIA!
-            
-            ### ¿LISTO PARA JUGAR?
             """)
             
             if st.button("▶️ COMENZAR PARTIDA", use_container_width=True, key="btn_comenzar_solo"):
@@ -920,7 +604,6 @@ def mostrar_solitario():
                     st.error("⚠️ POR FAVOR, INGRESA TU NOMBRE")
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # Juego activo
     elif st.session_state.partida_activa_solo:
         st.markdown(f"""
         <div class="contenedor-juego">
@@ -931,7 +614,7 @@ def mostrar_solitario():
         col_juego1, col_juego2 = st.columns([2, 1])
         
         with col_juego1:
-            st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+            st.markdown('<div class="app-card">', unsafe_allow_html=True)
             st.subheader("🔢 HAZ TU ADIVINANZA")
             
             adivinanza = st.number_input(
@@ -939,8 +622,7 @@ def mostrar_solitario():
                 min_value=1,
                 max_value=1000,
                 step=1,
-                key="adivinanza_input_solo",
-                help="PRESIONA ENTER O USA LOS BOTONES PARA AJUSTAR"
+                key="adivinanza_input_solo"
             )
             
             col_btn_intentar, col_btn_cancelar = st.columns(2)
@@ -986,7 +668,7 @@ def mostrar_solitario():
             st.markdown('</div>', unsafe_allow_html=True)
         
         with col_juego2:
-            st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+            st.markdown('<div class="app-card">', unsafe_allow_html=True)
             st.subheader("📊 ESTADO DE LA PARTIDA")
             
             st.markdown('<div class="metric-container">', unsafe_allow_html=True)
@@ -999,36 +681,16 @@ def mostrar_solitario():
             
             st.info(f"🎯 **DIFICULTAD:** {st.session_state.dificultad_solo}")
             st.info(f"👤 **JUGADOR:** {st.session_state.jugador_solo}")
-            
-            if st.session_state.intentos_solo > 0:
-                with st.expander("💡 PISTAS ESTADÍSTICAS", expanded=True):
-                    if adivinanza < st.session_state.numero_secreto_solo:
-                        st.success(f"PRUEBA CON NÚMEROS ENTRE **{adivinanza + 1}** Y **1000**")
-                        rango_min = adivinanza + 1
-                        rango_max = 1000
-                    elif adivinanza > st.session_state.numero_secreto_solo:
-                        st.success(f"PRUEBA CON NÚMEROS ENTRE **1** Y **{adivinanza - 1}**")
-                        rango_min = 1
-                        rango_max = adivinanza - 1
-                    else:
-                        rango_min = 1
-                        rango_max = 1000
-                    
-                    st.caption(f"RANGO RECOMENDADO: {rango_min} - {rango_max}")
-                    
-                    intentos_restantes = st.session_state.max_intentos_solo - st.session_state.intentos_solo
-                    st.warning(f"⏱️ **INTENTOS RESTANTES:** {intentos_restantes}")
             st.markdown('</div>', unsafe_allow_html=True)
 
 # =================== MODO 2 JUGADORES ===================
 
 def mostrar_dos_jugadores():
     """Muestra la página del modo 2 jugadores"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
     st.title("👥 MODO 2 JUGADORES")
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Botón para volver al inicio
     col_volver, _ = st.columns([1, 3])
     with col_volver:
         if st.button("← VOLVER AL INICIO", key="btn_volver_j2", type="secondary"):
@@ -1037,7 +699,6 @@ def mostrar_dos_jugadores():
     
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    # Mostrar resultado si existe
     if st.session_state.resultado_j2 is not None:
         if st.session_state.resultado_j2 == "ganado":
             st.markdown(f"""
@@ -1061,7 +722,6 @@ def mostrar_dos_jugadores():
             </div>
             """, unsafe_allow_html=True)
         
-        st.markdown('<div class="grid-container">', unsafe_allow_html=True)
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
             if st.button("🔄 JUGAR OTRA PARTIDA", use_container_width=True, key="btn_reiniciar_j2"):
@@ -1071,13 +731,11 @@ def mostrar_dos_jugadores():
             if st.button("📊 VER ESTADÍSTICAS", use_container_width=True, type="secondary", key="btn_estad_j2"):
                 navegar_a("estadisticas")
                 st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    # FASE 1: Jugador 1 elige el número
     if st.session_state.fase_j2 == 1:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.subheader("👤 FASE 1: JUGADOR 1 (PIENSA EL NÚMERO)")
         
         col_j1_1, col_j1_2 = st.columns(2)
@@ -1096,13 +754,8 @@ def mostrar_dos_jugadores():
                 max_value=1000,
                 step=1,
                 key="numero_secreto_input",
-                help="¡NO LE DIGAS A NADIE EL NÚMERO!",
                 value=st.session_state.numero_secreto_j2 if st.session_state.numero_secreto_j2 else 500
             )
-            
-            if numero_secreto:
-                sugerencia = sugerir_dificultad(numero_secreto)
-                st.info(f"💡 **SUGERENCIA:** {sugerencia}")
         
         with col_j1_2:
             st.subheader("🎯 CONFIGURAR DIFICULTAD")
@@ -1123,16 +776,6 @@ def mostrar_dos_jugadores():
                 max_j2 = 5
                 st.error("🔴 **DIFÍCIL:** SOLO 5 INTENTOS")
             
-            st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-            st.markdown("### 📋 INSTRUCCIONES PARA JUGADOR 1:")
-            st.markdown("""
-            1. ✅ INGRESA TU NOMBRE
-            2. ✅ ELIGE UN NÚMERO SECRETO
-            3. ✅ CONFIGURA LA DIFICULTAD
-            4. ✅ PRESIONA REGISTRAR
-            5. 🔄 PASA EL DISPOSITIVO AL JUGADOR 2
-            """)
-            
             if st.button("✅ REGISTRAR NÚMERO", use_container_width=True, key="btn_registrar_j2"):
                 if jugador1 and jugador1.strip() and 1 <= numero_secreto <= 1000:
                     st.session_state.jugador1_nombre = jugador1.strip()
@@ -1147,7 +790,6 @@ def mostrar_dos_jugadores():
                     st.error("⚠️ COMPLETA TODOS LOS CAMPOS CORRECTAMENTE")
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # FASE 2: Jugador 2 adivina
     elif st.session_state.fase_j2 == 2:
         if st.session_state.numero_secreto_j2 is None:
             st.error("ERROR: NO SE CONFIGURÓ EL NÚMERO SECRETO. VUELVE A LA FASE 1.")
@@ -1162,7 +804,7 @@ def mostrar_dos_jugadores():
             col_j2_1, col_j2_2 = st.columns(2)
             
             with col_j2_1:
-                st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+                st.markdown('<div class="app-card">', unsafe_allow_html=True)
                 jugador2 = st.text_input(
                     "NOMBRE DEL JUGADOR 2:",
                     placeholder="EJ: LUIS",
@@ -1223,7 +865,7 @@ def mostrar_dos_jugadores():
                 st.markdown('</div>', unsafe_allow_html=True)
             
             with col_j2_2:
-                st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+                st.markdown('<div class="app-card">', unsafe_allow_html=True)
                 jugador_actual = st.session_state.jugador2_nombre or jugador2 or "JUGADOR 2"
                 st.subheader(f"📊 ESTADO - {jugador_actual}")
                 
@@ -1238,30 +880,20 @@ def mostrar_dos_jugadores():
                 st.info(f"🎮 **CONTRA:** {st.session_state.jugador1_nombre}")
                 st.info(f"📈 **DIFICULTAD:** {st.session_state.dificultad_j2}")
                 
-                if st.session_state.intentos_j2 > 0:
-                    with st.expander("💡 ESTRATEGIA RECOMENDADA", expanded=True):
-                        if adivinanza_j2 < st.session_state.numero_secreto_j2:
-                            st.success(f"PRUEBA ENTRE **{adivinanza_j2 + 1}** Y **1000**")
-                        elif adivinanza_j2 > st.session_state.numero_secreto_j2:
-                            st.success(f"PRUEBA ENTRE **1** Y **{adivinanza_j2 - 1}**")
-                        else:
-                            st.info("¡EMPIEZA POR EL MEDIO (500)!")
-                
                 if st.button("❌ CANCELAR PARTIDA", use_container_width=True, type="secondary", key="btn_cancelar_j2"):
                     st.session_state.fase_j2 = 1
                     st.session_state.resultado_j2 = None
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ESTADÍSTICAS ===================
+# =================== ESTADÍSTICAS (MODIFICADA - SIN EXCEL) ===================
 
 def mostrar_estadisticas():
-    """Muestra la página de estadísticas"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+    """Muestra la página de estadísticas - SIN openpyxl"""
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
     st.title("📊 ESTADÍSTICAS")
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Botón para volver al inicio
     col_volver, _ = st.columns([1, 3])
     with col_volver:
         if st.button("← VOLVER AL INICIO", key="btn_volver_estad", type="secondary"):
@@ -1271,13 +903,13 @@ def mostrar_estadisticas():
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
     if not st.session_state.estadisticas:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.info("📭 AÚN NO HAY PARTIDAS REGISTRADAS")
         st.caption("JUEGA ALGUNAS PARTIDAS PARA VER ESTADÍSTICAS AQUÍ")
         
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
-            if st.button("🏎️ JUGAR MODO SOLITARIO", use_container_width=True, key="btn_ir_solo_estad"):
+            if st.button("🎮 JUGAR MODO SOLITARIO", use_container_width=True, key="btn_ir_solo_estad"):
                 navegar_a("solitario")
                 st.rerun()
         with col_btn2:
@@ -1288,12 +920,12 @@ def mostrar_estadisticas():
     else:
         df = pd.DataFrame(st.session_state.estadisticas)
         
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-        st.info(f"📁 **ARCHIVO DE DATOS:** {ARCHIVO_ESTADISTICAS} ({len(df)} PARTIDAS GUARDADAS)")
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
+        st.info(f"📁 **DATOS REGISTRADOS:** {len(df)} PARTIDAS")
         st.markdown('</div>', unsafe_allow_html=True)
         
         # Filtros
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.subheader("🔍 FILTROS")
         col_filtro1, col_filtro2, col_filtro3 = st.columns(3)
         
@@ -1335,7 +967,7 @@ def mostrar_estadisticas():
             df_filtrado = df_filtrado[df_filtrado["Resultado"].isin(filtrar_resultado)]
         
         # Métricas
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.subheader("📈 RESUMEN GENERAL")
         
         col_met1, col_met2, col_met3, col_met4, col_met5 = st.columns(5)
@@ -1388,63 +1020,64 @@ def mostrar_estadisticas():
                 st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Tabla de datos
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        # Tabla de datos - OPCIÓN 3: MOSTRAR EN PANTALLA
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.subheader("📋 HISTORIAL DETALLADO")
         
-        # Mostrar mensaje si no hay datos después de filtrar
         if df_filtrado.empty:
             st.warning("⚠️ NO HAY PARTIDAS QUE COINCIDAN CON LOS FILTROS SELECCIONADOS")
-            st.caption("PRUEBA A CAMBIAR LOS FILTROS PARA VER MÁS RESULTADOS")
         else:
+            # Ordenar por fecha descendente
+            df_filtrado = df_filtrado.sort_values("Fecha", ascending=False)
+            
+            # Mostrar como tabla interactiva
             st.dataframe(
-                df_filtrado.sort_values("Fecha", ascending=False),
+                df_filtrado,
                 use_container_width=True,
                 hide_index=True,
                 column_config={
-                    "Fecha": st.column_config.DatetimeColumn("Fecha", format="DD/MM/YY HH:mm"),
-                    "Nota": st.column_config.NumberColumn("Nota", format="%.2f", help="Puntuación de 0 a 10"),
-                    "Número Secreto": st.column_config.TextColumn("Número", help="*** si fue ganado")
+                    "Fecha": st.column_config.TextColumn("Fecha"),
+                    "Nota": st.column_config.NumberColumn("Nota", format="%.2f"),
+                    "Número Secreto": st.column_config.TextColumn("Número Secreto")
                 }
             )
+            
+            # Mostrar también como tabla estática
+            with st.expander("📄 VER COMO TABLA SIMPLE"):
+                st.table(df_filtrado.head(20))
+                
+            # Mostrar datos en formato de texto
+            with st.expander("📝 VER DATOS EN TEXTO"):
+                st.code(df_filtrado.to_string(index=False), language='text')
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # Exportar datos - SOLO si hay datos filtrados
+        # Exportar datos - SOLO CSV (SIN EXCEL)
         if not df_filtrado.empty:
-            st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+            st.markdown('<div class="app-card">', unsafe_allow_html=True)
             st.subheader("💾 EXPORTAR DATOS")
-            col_exp1, col_exp2 = st.columns(2)
             
-            with col_exp1:
-                csv = df_filtrado.to_csv(index=False).encode('utf-8')
-                st.download_button(
-                    label="📥 DESCARGAR CSV",
-                    data=csv,
-                    file_name="estadisticas_adivinanza_bmw.csv",
-                    mime="text/csv",
-                    use_container_width=True,
-                    key="btn_descargar_csv"
-                )
+            # Opción 1: Descargar CSV
+            csv = df_filtrado.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 DESCARGAR COMO CSV",
+                data=csv,
+                file_name="estadisticas_juego_adivinanza.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="btn_descargar_csv"
+            )
             
-            with col_exp2:
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                    df_filtrado.to_excel(writer, index=False, sheet_name='Estadísticas')
-                    writer.save()
-                
-                st.download_button(
-                    label="📥 DESCARGAR EXCEL",
-                    data=output.getvalue(),
-                    file_name="estadisticas_adivinanza_bmw.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
-                    key="btn_descargar_excel",
-                    type="secondary"
-                )
+            # Opción 2: Copiar datos al portapapeles
+            with st.expander("📋 COPIAR DATOS AL PORTAPAPELES"):
+                datos_texto = df_filtrado.to_string(index=False)
+                st.code(datos_texto, language='text')
+                if st.button("📋 COPIAR TEXTO", key="btn_copiar_texto"):
+                    st.success("Texto copiado (simulado - usa Ctrl+C)")
+            
             st.markdown('</div>', unsafe_allow_html=True)
         
         # Limpiar estadísticas
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         if st.button("🗑️ LIMPIAR TODAS LAS ESTADÍSTICAS", type="secondary", use_container_width=True, key="btn_limpiar_estad"):
             st.session_state.estadisticas = []
@@ -1461,11 +1094,10 @@ def mostrar_estadisticas():
 
 def mostrar_instrucciones():
     """Muestra la página de instrucciones"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.title("📖 INSTRUCCIONES DETALLADAS")
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
+    st.title("📖 INSTRUCCIONES")
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Botón para volver al inicio
     col_volver, _ = st.columns([1, 3])
     with col_volver:
         if st.button("← VOLVER AL INICIO", key="btn_volver_inst", type="secondary"):
@@ -1474,146 +1106,50 @@ def mostrar_instrucciones():
     
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    # Pestañas
-    tab1, tab2, tab3 = st.tabs(["🎮 CÓMO JUGAR", "🏆 SISTEMA DE PUNTUACIÓN", "💡 CONSEJOS"])
+    tab1, tab2 = st.tabs(["🎮 CÓMO JUGAR", "💡 CONSEJOS"])
     
     with tab1:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("""
         ## 🎯 OBJETIVO DEL JUEGO
-        ADIVINAR UN NÚMERO SECRETO ENTRE **1 Y 1000** EN LA MENOR CANTIDAD DE INTENTOS POSIBLE.
-        
-        <div class="separator"></div>
+        ADIVINAR UN NÚMERO SECRETO ENTRE **1 Y 1000**.
         
         ## 🎮 MODO SOLITARIO
-        
-        ### PASO A PASO:
-        1. **INGRESA TU NOMBRE**
-        2. **SELECCIONA LA DIFICULTAD:**
-           - 🟢 **FÁCIL:** 20 INTENTOS
-           - 🟡 **MEDIO:** 12 INTENTOS  
-           - 🔴 **DIFÍCIL:** 5 INTENTOS
-        
-        3. **COMIENZA A JUGAR:**
-           - INGRESA TU ADIVINANZA
-           - EL SISTEMA TE DIRÁ SI EL NÚMERO SECRETO ES **MAYOR** O **MENOR**
-           - ¡SIGUE INTENTANDO HASTA ADIVINARLO!
-        
-        4. **RESULTADO:**
-           - ✅ **SI ADIVINAS:** ¡FELICIDADES! (PUEDES VOLVER A JUGAR)
-           - ❌ **SI SE ACABAN LOS INTENTOS:** ¡INTÉNTALO DE NUEVO!
-        
-        <div class="separator"></div>
+        1. INGRESA TU NOMBRE
+        2. SELECCIONA LA DIFICULTAD
+        3. ADIVINA EL NÚMERO SECRETO
+        4. RECIBIRÁS PISTAS: **MAYOR** O **MENOR**
         
         ## 👥 MODO 2 JUGADORES
-        
-        ### PARA EL **JUGADOR 1** (PIENSA EL NÚMERO):
-        1. INGRESA TU NOMBRE
-        2. ELIGE UN NÚMERO SECRETO (1-1000)
-        3. **¡NO LE DIGAS A NADIE EL NÚMERO!**
-        4. CONFIGURA LA DIFICULTAD PARA EL JUGADOR 2
-        
-        ### PARA EL **JUGADOR 2** (ADIVINA):
-        1. INGRESA TU NOMBRE
-        2. COMIENZA A ADIVINAR
-        3. RECIBIRÁS PISTAS: **MAYOR** O **MENOR**
-        4. INTENTA ADIVINAR ANTES DE QUE SE ACABEN LOS INTENTOS
-        5. **RESULTADO:** ✅ CORRECTO (GANAS) O ❌ INCORRECTO (PIERDES)
-        
-        <div class="separator"></div>
-        
-        ## 📊 ESTADÍSTICAS
-        - TODAS TUS PARTIDAS SE GUARDAN AUTOMÁTICAMENTE EN UN ARCHIVO CSV
-        - PUEDES FILTRAR POR JUGADOR, DIFICULTAD O RESULTADO
-        - EXPORTA TUS DATOS A CSV O EXCEL
-        - LOS DATOS SE CONSERVAN MIENTRAS USES LA MISMA SESIÓN
-        """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with tab2:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-        st.markdown("""
-        ## 🏆 SISTEMA DE PUNTUACIÓN
-        
-        ### 📐 FÓRMULA DE CÁLCULO:
-        ```
-        NOTA = 10 × (INTENTOS RESTANTES + 1) / INTENTOS TOTALES
-        ```
-        
-        ### 📊 EJEMPLOS:
-        
-        #### DIFICULTAD **FÁCIL** (20 INTENTOS):
-        - ✅ ADIVINAS EN **5 INTENTOS**:  
-          `NOTA = 10 × (20-5+1)/20 = 10 × 16/20 = 8.0`
-        
-        - ✅ ADIVINAS EN **15 INTENTOS**:  
-          `NOTA = 10 × (20-15+1)/20 = 10 × 6/20 = 3.0`
-        
-        #### DIFICULTAD **DIFÍCIL** (5 INTENTOS):
-        - ✅ ADIVINAS EN **3 INTENTOS**:  
-          `NOTA = 10 × (5-3+1)/5 = 10 × 3/5 = 6.0`
-        
-        ### 🎯 CÓMO OBTENER MEJOR PUNTUACIÓN:
-        1. **ADIVINA MÁS RÁPIDO** (MENOS INTENTOS = MÁS PUNTOS)
-        2. **JUEGA EN DIFICULTAD ALTA** (MÁS RIESGO = MÁS RECOMPENSA)
-        3. **MEJORA TU ESTRATEGIA** DE ADIVINANZA
-        
-        ### 📈 ESCALA DE NOTAS:
-        - **9.0 - 10.0:** 🏅 EXCELENTE  
-        - **7.0 - 8.9:** 🥈 MUY BUENO  
-        - **5.0 - 6.9:** 🥉 BUENO  
-        - **3.0 - 4.9:** ✅ ACEPTABLE  
-        - **0.0 - 2.9:** 📚 SIGUE PRACTICANDO
+        - **JUGADOR 1:** ELIGE UN NÚMERO SECRETO
+        - **JUGADOR 2:** INTENTA ADIVINARLO
+        - INTERCAMBIEN EL DISPOSITIVO ENTRE FASES
         """)
         st.markdown('</div>', unsafe_allow_html=True)
     
-    with tab3:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+    with tab2:
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("""
-        ## 💡 ESTRATEGIAS PARA GANAR
+        ## 💡 ESTRATEGIAS
+        - **EMPIEZA POR EL MEDIO** (500)
+        - **USA BÚSQUEDA BINARIA:** DIVIDE EL RANGO POR LA MITAD
+        - **APRENDE DE TUS ERRORES:** LAS PISTAS SON TU MEJOR ALIADO
         
-        ### 🔍 MÉTODO DE BÚSQUEDA BINARIA (RECOMENDADO):
-        1. EMPIEZA CON **500** (EL PUNTO MEDIO)
-        2. SI ES MAYOR, PRUEBA **750**
-        3. SI ES MENOR, PRUEBA **250**
-        4. SIGUE DIVIDIENDO EL RANGO POR LA MITAD
-        
-        ### 📊 ESTADÍSTICAS ÚTILES:
-        - **67%** DE LOS NÚMEROS ESTÁN ENTRE **300-700**
-        - SOLO **10%** ESTÁN EN LOS EXTREMOS (1-100, 900-1000)
-        - EL NÚMERO **500** ES EL MÁS COMÚN DE ADIVINAR
-        
-        ### 🎮 CONSEJOS POR MODO:
-        
-        #### PARA **MODO SOLITARIO:**
-        - **FÁCIL:** TÓMATE TU TIEMPO, EXPLORA DIFERENTES RANGOS
-        - **MEDIO:** USA BÚSQUEDA BINARIA DESDE EL INICIO
-        - **DIFÍCIL:** ARRIESGA MÁS, CONFÍA EN TU INTUICIÓN
-        
-        #### PARA **MODO 2 JUGADORES:**
-        - **JUGADOR 1:** ELIGE NÚMEROS INUSUALES (EJ: 137, 842, 369)
-        - **JUGADOR 2:** PREGUNTA POR RANGOS AMPLIOS PRIMERO
-        
-        ### 🎲 PATRONES COMUNES:
-        1. MUCHOS JUGADORES ELIGEN NÚMEROS QUE TERMINAN EN **0, 5 O 7**
-        2. LOS NÚMEROS DEL **1 AL 100** SON MÁS DIFÍCILES DE ADIVINAR
-        3. LOS NÚMEROS CON **DÍGITOS REPETIDOS** (333, 777) SON POPULARES
-        
-        ### 🏅 RÉCORDS A BATIR:
-        - **NOTA PERFECTA 10.0:** ADIVINAR EN EL PRIMER INTENTO
-        - **RACHA GANADORA:** 5 PARTIDAS CONSECUTIVAS GANADAS
-        - **RETO EXTREMO:** GANAR EN DIFICULTAD **DIFÍCIL** CON NOTA >8.0
+        ## 🎯 DIFICULTADES
+        - **FÁCIL:** 20 INTENTOS - PERFECTO PARA PRINCIPIANTES
+        - **MEDIO:** 12 INTENTOS - UN BUEN DESAFÍO
+        - **DIFÍCIL:** 5 INTENTOS - SOLO PARA EXPERTOS
         """)
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
     st.subheader("🎮 ¿LISTO PARA JUGAR?")
     
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("🏎️ COMENZAR MODO SOLITARIO", use_container_width=True, key="btn_inst_solo"):
+        if st.button("🎮 COMENZAR MODO SOLITARIO", use_container_width=True, key="btn_inst_solo"):
             navegar_a("solitario")
             st.rerun()
     with col_btn2:
@@ -1622,94 +1158,11 @@ def mostrar_instrucciones():
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ACERCA DE ===================
-
-def mostrar_acerca_de():
-    """Muestra la página acerca de"""
-    st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-    st.title("ℹ️ ACERCA DE ESTE PROYECTO")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Botón para volver al inicio
-    col_volver, _ = st.columns([1, 3])
-    with col_volver:
-        if st.button("← VOLVER AL INICIO", key="btn_volver_acerca", type="secondary"):
-            navegar_a("inicio")
-            st.rerun()
-    
-    st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-    
-    col_about1, col_about2 = st.columns([2, 1])
-    
-    with col_about1:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-        st.markdown("""
-        ## 🎮 JUEGO DE ADIVINANZA - BMW EDITION
-        
-        ### ✨ CARACTERÍSTICAS PRINCIPALES:
-        - **DOS MODOS DE JUEGO:** SOLITARIO Y 2 JUGADORES
-        - **TRES NIVELES DE DIFICULTAD:** FÁCIL, MEDIO, DIFÍCIL
-        - **SISTEMA DE PUNTUACIÓN INTELIGENTE:** NOTAS DEL 0 AL 10
-        - **ESTADÍSTICAS PERSISTENTES:** GUARDADO AUTOMÁTICO EN CSV
-        - **INTERFAZ PREMIUM:** DISEÑO INSPIRADO EN BMW
-        
-        ### 🛠️ TECNOLOGÍAS UTILIZADAS:
-        - **PYTHON 3** + **STREAMLIT** PARA LA INTERFAZ WEB
-        - **PANDAS** PARA ANÁLISIS DE DATOS Y CSV
-        - **OPENPYXL** PARA EXPORTACIÓN A EXCEL
-        - **RANDOM** PARA GENERACIÓN DE NÚMEROS ALEATORIOS
-        
-        ### 🎯 PROPÓSITO EDUCATIVO:
-        ESTE PROYECTO FUE DESARROLLADO COMO DEMOSTRACIÓN DE:
-        - PROGRAMACIÓN EN PYTHON APLICADA A JUEGOS
-        - INTERFAZ DE USUARIO WEB CON STREAMLIT
-        - MANEJO DE DATOS Y ESTADÍSTICAS
-        - LÓGICA DE PROGRAMACIÓN Y ALGORITMOS
-        
-        ### 📄 LICENCIA:
-        **PROYECTO EDUCATIVO** - LIBRE PARA USO ACADÉMICO Y PERSONAL.
-        
-        ### 💻 CÓDIGO FUENTE:
-        DISPONIBLE PARA FINES EDUCATIVOS Y DE APRENDIZAJE.
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    with col_about2:
-        st.markdown('<div class="bmw-card">', unsafe_allow_html=True)
-        st.info("🎓 **PROYECTO EDUCATIVO**")
-        st.success("✅ **100% FUNCIONAL**")
-        st.warning("📱 **DISEÑO RESPONSIVE**")
-        st.error("⚡ **ALTO RENDIMIENTO**")
-        
-        st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-        st.subheader("📊 DATOS DEL PROYECTO")
-        
-        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
-        st.markdown(f'<div class="metric-value">{len(st.session_state.estadisticas)}</div>', unsafe_allow_html=True)
-        st.markdown('<div class="metric-label">PARTIDAS GUARDADAS</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-        
-        st.subheader("🎮 PROBAR EL JUEGO")
-        if st.button("🏎️ PROBAR MODO SOLITARIO", use_container_width=True, key="btn_probar_solo"):
-            navegar_a("solitario")
-            st.rerun()
-        
-        if st.button("👥 PROBAR CON AMIGOS", use_container_width=True, type="secondary", key="btn_probar_j2"):
-            navegar_a("dos_jugadores")
-            st.rerun()
-        
-        st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-        st.caption(f"🕐 **ÚLTIMA ACTUALIZACIÓN:** {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}")
-        st.markdown('</div>', unsafe_allow_html=True)
-
 # =================== ROUTER PRINCIPAL ===================
 
 def main():
     """Función principal que decide qué página mostrar"""
     
-    # Determinar qué página mostrar basado en session_state
     pagina = st.session_state.get('pagina_actual', 'inicio')
     
     if pagina == "inicio":
@@ -1722,14 +1175,12 @@ def main():
         mostrar_estadisticas()
     elif pagina == "instrucciones":
         mostrar_instrucciones()
-    elif pagina == "acerca_de":
-        mostrar_acerca_de()
     else:
-        mostrar_inicio()  # Por defecto
+        mostrar_inicio()
     
-    # Footer común
+    # Footer
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="bmw-card footer-bmw">', unsafe_allow_html=True)
+    st.markdown('<div class="app-card footer-app">', unsafe_allow_html=True)
     footer_col1, footer_col2, footer_col3 = st.columns(3)
     with footer_col1:
         st.caption("Juego de adivinanza v4.0")
