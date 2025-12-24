@@ -249,7 +249,7 @@ def menu_principal():
     inicializar_excel()
     
     print(colored("\n" + "="*60, 'magenta'))
-    print(colored("         JUEGO DE ADIVINANZA - ¡VERSIÓN MEJORADA!", 'magenta', attrs=['bold']))
+    print(colored("         JUEGO DE ADIVINANZA", 'magenta', attrs=['bold']))
     print(colored("="*60, 'magenta'))
     
     while True:
