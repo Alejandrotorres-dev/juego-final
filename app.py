@@ -429,7 +429,7 @@ def mostrar_inicio():
     
     with col1:
         st.markdown("""
-        ## 🎯 ¿CÓMO FUNCIONA?
+        ##  ¿CÓMO FUNCIONA?
         
         **¡Adivina el número secreto entre 1 y 1000!**
         
