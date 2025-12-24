@@ -485,7 +485,7 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("###ACCESOS RÁPIDOS")
+        st.markdown("### ACCESOS RÁPIDOS")
         col_acc1, col_acc2 = st.columns(2)
         with col_acc1:
             if st.button("📊 ESTADÍSTICAS", key="btn_estad_inicio", use_container_width=True):
