@@ -462,7 +462,7 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("### 🚀 COMENZAR A JUGAR")
+        st.markdown("###  COMENZAR A JUGAR")
         
         if st.button(
             "JUGAR MODO SOLITARIO", 
