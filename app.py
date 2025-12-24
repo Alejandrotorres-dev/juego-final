@@ -57,98 +57,34 @@ app_css = """
         padding-bottom: 0rem;
     }
     
-    /* TÍTULO 3D PRINCIPAL - SOLO "JUEGO DE ADIVINANZA" */
-    .titulo-3d-principal {
-        font-size: 64px;
-        font-weight: 900;
-        text-align: center;
-        margin-bottom: 40px;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        position: relative;
-        animation: flotar-3d 6s ease-in-out infinite;
-        text-shadow: 
-            0 1px 0 #ccc,
-            0 2px 0 #c9c9c9,
-            0 3px 0 #bbb,
-            0 4px 0 #b9b9b9,
-            0 5px 0 #aaa,
-            0 6px 1px rgba(0,0,0,.1),
-            0 0 5px rgba(0,0,0,.1),
-            0 1px 3px rgba(0,0,0,.3),
-            0 3px 5px rgba(0,0,0,.2),
-            0 10px 20px rgba(0,0,0,.25),
-            0 0 30px rgba(0, 102, 179, 0.5),
-            0 0 40px rgba(0, 153, 255, 0.3);
+    /* Títulos */
+    h1, h2, h3, h4 {
+        font-weight: 700;
+        color: var(--text-light);
+        margin-top: 0;
     }
     
-    @keyframes flotar-3d {
-        0%, 100% { 
-            transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
-            text-shadow: 
-                0 1px 0 #ccc,
-                0 2px 0 #c9c9c9,
-                0 3px 0 #bbb,
-                0 4px 0 #b9b9b9,
-                0 5px 0 #aaa,
-                0 6px 1px rgba(0,0,0,.1),
-                0 0 5px rgba(0,0,0,.1),
-                0 1px 3px rgba(0,0,0,.3),
-                0 3px 5px rgba(0,0,0,.2),
-                0 10px 20px rgba(0,0,0,.25),
-                0 0 30px rgba(0, 102, 179, 0.5),
-                0 0 40px rgba(0, 153, 255, 0.3);
-        }
-        50% { 
-            transform: translateY(-10px) rotateX(5deg) rotateY(5deg); 
-            text-shadow: 
-                0 1px 0 #ccc,
-                0 2px 0 #c9c9c9,
-                0 3px 0 #bbb,
-                0 4px 0 #b9b9b9,
-                0 5px 0 #aaa,
-                0 6px 1px rgba(0,0,0,.1),
-                0 0 5px rgba(0,0,0,.1),
-                0 1px 3px rgba(0,0,0,.3),
-                0 3px 5px rgba(0,0,0,.2),
-                0 15px 25px rgba(0,0,0,.3),
-                0 0 40px rgba(0, 102, 179, 0.6),
-                0 0 50px rgba(0, 153, 255, 0.4);
-        }
-    }
-    
-    .titulo-gradient {
-        background: linear-gradient(
-            90deg,
-            #FFD700 0%,
-            #FFA500 15%,
-            #FF6347 30%,
-            #FF1493 45%,
-            #9370DB 60%,
-            #00BFFF 75%,
-            #00FA9A 90%,
-            #FFD700 100%
-        );
-        background-size: 200% auto;
+    h1 {
+        font-size: 48px;
+        background: linear-gradient(90deg, var(--text-light), var(--primary-light));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: brillo-titulo 8s linear infinite;
-    }
-    
-    @keyframes brillo-titulo {
-        0% { background-position: 0% center; }
-        100% { background-position: 200% center; }
-    }
-    
-    .subtitulo-3d {
-        font-size: 20px;
+        margin-bottom: 24px;
         text-align: center;
-        color: var(--text-muted);
-        margin-top: -30px;
-        margin-bottom: 40px;
-        font-style: italic;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        padding-bottom: 15px;
+    }
+    
+    h1:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        border-radius: 2px;
     }
     
     /* Tarjetas */
@@ -334,39 +270,10 @@ app_css = """
         font-size: 12px;
     }
     
-    /* Contenedor para la palabra 3D interactiva */
-    .contenedor-3d-externo {
-        background: linear-gradient(145deg, var(--medium-bg) 0%, var(--dark-bg) 100%);
-        border-radius: 12px;
-        padding: 20px;
-        margin: 30px 0;
-        border: 2px solid var(--border-color);
-        box-shadow: 0 8px 30px rgba(0, 102, 179, 0.2);
-        text-align: center;
-    }
-    
-    /* Título del contenedor 3D */
-    .titulo-3d {
-        font-size: 18px;
-        color: var(--primary-light);
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 600;
-    }
-    
-    /* Instrucciones 3D */
-    .instrucciones-3d {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 10px;
-        font-style: italic;
-    }
-    
     /* Responsive */
     @media (max-width: 768px) {
-        .titulo-3d-principal {
-            font-size: 42px;
+        h1 {
+            font-size: 36px;
         }
         
         .metric-value {
@@ -380,241 +287,12 @@ app_css = """
         .numero-secreto {
             font-size: 42px;
         }
-        
-        .contenedor-3d-externo {
-            padding: 15px;
-            margin: 20px 0;
-        }
     }
 </style>
 """
 
 # Aplicar el CSS
 st.markdown(app_css, unsafe_allow_html=True)
-
-# =================== PALABRA 3D INTERACTIVA ===================
-
-def crear_palabra_3d_html(palabra="ADIVINA"):
-    """Crea una palabra 3D con HTML/CSS puro - SIN plotly"""
-    html_3d = f"""
-    <style>
-    .contenedor-3d {{
-        perspective: 800px;
-        width: 100%;
-        height: 300px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 30px 0;
-    }}
-    
-    .palabra-3d {{
-        display: flex;
-        transform-style: preserve-3d;
-        animation: rotar-3d 20s infinite linear;
-    }}
-    
-    @keyframes rotar-3d {{
-        0% {{ transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }}
-        100% {{ transform: rotateX(360deg) rotateY(360deg) rotateZ(0deg); }}
-    }}
-    
-    .letra-3d {{
-        position: relative;
-        width: 70px;
-        height: 100px;
-        margin: 0 5px;
-        transform-style: preserve-3d;
-        transition: transform 0.5s;
-    }}
-    
-    .letra-3d:hover {{
-        animation: temblar 0.5s;
-    }}
-    
-    @keyframes temblar {{
-        0%, 100% {{ transform: translateX(0); }}
-        25% {{ transform: translateX(-5px); }}
-        75% {{ transform: translateX(5px); }}
-    }}
-    
-    .cara {{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 48px;
-        font-weight: bold;
-        color: white;
-        backface-visibility: visible;
-    }}
-    
-    /* Caras del cubo */
-    .frontal {{ transform: translateZ(35px); background: linear-gradient(45deg, #0066B3, #0099FF); }}
-    .trasera {{ transform: rotateY(180deg) translateZ(35px); background: linear-gradient(45deg, #004C8F, #0077CC); }}
-    .derecha {{ transform: rotateY(90deg) translateZ(35px); background: linear-gradient(45deg, #00A86B, #00CC88); }}
-    .izquierda {{ transform: rotateY(-90deg) translateZ(35px); background: linear-gradient(45deg, #FFC107, #FFD700); }}
-    .superior {{ transform: rotateX(90deg) translateZ(35px); background: linear-gradient(45deg, #E4002B, #FF3366); }}
-    .inferior {{ transform: rotateX(-90deg) translateZ(35px); background: linear-gradient(45deg, #9933CC, #CC66FF); }}
-    
-    .controles-3d {{
-        margin-top: 20px;
-        text-align: center;
-    }}
-    
-    .boton-3d {{
-        display: inline-block;
-        margin: 5px;
-        padding: 8px 15px;
-        background: linear-gradient(45deg, #0066B3, #0099FF);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s;
-    }}
-    
-    .boton-3d:hover {{
-        transform: scale(1.1);
-        box-shadow: 0 5px 15px rgba(0, 153, 255, 0.4);
-    }}
-    </style>
-    
-    <div class="contenedor-3d" id="contenedor3d">
-        <div class="palabra-3d" id="palabra3d">
-    """
-    
-    # Añadir letras
-    colores = ['#0066B3', '#0099FF', '#00A86B', '#FFC107', '#E4002B', '#9933CC']
-    for i, letra in enumerate(palabra):
-        color = colores[i % len(colores)]
-        html_3d += f"""
-            <div class="letra-3d" style="animation-delay: {i*0.1}s;">
-                <div class="cara frontal" style="background: {color};">{letra}</div>
-                <div class="cara trasera" style="background: {color}88;">{letra}</div>
-                <div class="cara derecha" style="background: {color}CC;">{letra}</div>
-                <div class="cara izquierda" style="background: {color}AA;">{letra}</div>
-                <div class="cara superior" style="background: {color}99;">{letra}</div>
-                <div class="cara inferior" style="background: {color}77;">{letra}</div>
-            </div>
-        """
-    
-    html_3d += """
-        </div>
-    </div>
-    
-    <div class="controles-3d">
-        <button class="boton-3d" onclick="rotarPalabra('x', 90)">↻ Rotar X</button>
-        <button class="boton-3d" onclick="rotarPalabra('y', 90)">↻ Rotar Y</button>
-        <button class="boton-3d" onclick="rotarPalabra('z', 90)">↻ Rotar Z</button>
-        <button class="boton-3d" onclick="resetRotacion()">🔄 Reiniciar</button>
-        <button class="boton-3d" onclick="alternarAnimacion()">⏯️ Pausar/Reanudar</button>
-    </div>
-    
-    <script>
-    let palabra3d = document.getElementById('palabra3d');
-    let rotacionX = 0, rotacionY = 0, rotacionZ = 0;
-    let animacionActiva = true;
-    
-    function rotarPalabra(eje, grados) {
-        if (eje === 'x') rotacionX += grados;
-        if (eje === 'y') rotacionY += grados;
-        if (eje === 'z') rotacionZ += grados;
-        
-        actualizarRotacion();
-    }
-    
-    function resetRotacion() {
-        rotacionX = 0;
-        rotacionY = 0;
-        rotacionZ = 0;
-        actualizarRotacion();
-    }
-    
-    function alternarAnimacion() {
-        animacionActiva = !animacionActiva;
-        if (animacionActiva) {
-            palabra3d.style.animationPlayState = 'running';
-        } else {
-            palabra3d.style.animationPlayState = 'paused';
-        }
-    }
-    
-    function actualizarRotacion() {
-        palabra3d.style.transform = `rotateX(${rotacionX}deg) rotateY(${rotacionY}deg) rotateZ(${rotacionZ}deg)`;
-        if (animacionActiva) {
-            palabra3d.style.animation = 'none';
-            setTimeout(() => {
-                palabra3d.style.animation = 'rotar-3d 20s infinite linear';
-            }, 10);
-        }
-    }
-    
-    // Rotación manual con arrastre
-    let isDragging = false;
-    let lastX, lastY;
-    
-    contenedor3d.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        lastX = e.clientX;
-        lastY = e.clientY;
-        e.preventDefault();
-    });
-    
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        
-        let deltaX = e.clientX - lastX;
-        let deltaY = e.clientY - lastY;
-        
-        rotacionY += deltaX * 0.5;
-        rotacionX -= deltaY * 0.5;
-        
-        actualizarRotacion();
-        
-        lastX = e.clientX;
-        lastY = e.clientY;
-    });
-    
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-    
-    // Touch para móviles
-    contenedor3d.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        lastX = e.touches[0].clientX;
-        lastY = e.touches[0].clientY;
-        e.preventDefault();
-    });
-    
-    document.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        
-        let deltaX = e.touches[0].clientX - lastX;
-        let deltaY = e.touches[0].clientY - lastY;
-        
-        rotacionY += deltaX * 0.5;
-        rotacionX -= deltaY * 0.5;
-        
-        actualizarRotacion();
-        
-        lastX = e.touches[0].clientX;
-        lastY = e.touches[0].clientY;
-        
-        e.preventDefault();
-    });
-    
-    document.addEventListener('touchend', () => {
-        isDragging = false;
-    });
-    </script>
-    """
-    
-    return html_3d
 
 # =================== INICIALIZACIÓN DE SESSION STATE ===================
 
@@ -739,40 +417,19 @@ def reiniciar_dos_jugadores():
     st.session_state.fase_j2 = 1
     st.session_state.resultado_j2 = None
 
-# =================== PÁGINA DE INICIO CON TÍTULO 3D Y PALABRA INTERACTIVA ===================
+# =================== PÁGINA DE INICIO ===================
 
 def mostrar_inicio():
-    """Muestra la página principal con título 3D y palabra interactiva"""
-    
-    # TÍTULO 3D PRINCIPAL (solo "JUEGO DE ADIVINANZA")
-    st.markdown('<div class="titulo-3d-principal"><span class="titulo-gradient">JUEGO DE ADIVINANZA</span></div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-3d">🎮 Adivina el número secreto entre 1 y 1000 🎯</div>', unsafe_allow_html=True)
-    
-    # Contenedor para la palabra 3D interactiva (separada del título)
-    st.markdown('<div class="contenedor-3d-externo">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-3d">✨ PALABRA 3D INTERACTIVA</div>', unsafe_allow_html=True)
-    
-    # Selector de palabra para la sección interactiva
-    palabra_seleccionada = st.selectbox(
-        "Elige una palabra para jugar con el 3D:",
-        ["ADIVINA", "JUEGO", "DIVERTIDO", "NUMERO", "GANAR", "RETO"],
-        index=0,
-        key="selector_palabra"
-    )
-    
-    # Mostrar palabra 3D interactiva
-    html_3d = crear_palabra_3d_html(palabra_seleccionada)
-    st.markdown(html_3d, unsafe_allow_html=True)
-    
-    st.markdown('<div class="instrucciones-3d">✨ Haz clic y arrastra para rotar • Usa los botones para controles específicos</div>', unsafe_allow_html=True)
+    """Muestra la página principal"""
+    st.markdown('<div class="app-card">', unsafe_allow_html=True)
+    st.title("JUEGO DE ADIVINANZA")
     st.markdown('</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("""
-        ## 🎯 ¿CÓMO FUNCIONA?
+        ##  ¿CÓMO FUNCIONA?
         
         **¡Adivina el número secreto entre 1 y 1000!**
         
@@ -786,17 +443,9 @@ def mostrar_inicio():
         • Un jugador piensa el número  
         • Otro intenta adivinarlo  
         • ¡Perfecto para jugar con amigos!
-        
-        ### 🎮 CONTROLES 3D INTERACTIVOS:
-        • **ARRAS TRA:** Haz clic y arrastra para rotar  
-        • **BOTONES:** Rotaciones específicas en cada eje  
-        • **ANIMACIÓN:** Se rota automáticamente  
-        • **PAUSA:** Detén la animación cuando quieras
         """)
-        st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
-        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("### 🏆 RÉCORD ACTUAL")
         if st.session_state.estadisticas:
             mejor_partida = max(st.session_state.estadisticas, key=lambda x: x["Nota"])
@@ -813,10 +462,10 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("### 🚀 COMENZAR A JUGAR")
+        st.markdown("###  COMENZAR A JUGAR")
         
         if st.button(
-            "🎮 JUGAR MODO SOLITARIO", 
+            "JUGAR MODO SOLITARIO", 
             key="btn_solitario_inicio",
             use_container_width=True
         ):
@@ -836,7 +485,7 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("### 📍 ACCESOS RÁPIDOS")
+        st.markdown("### ACCESOS RÁPIDOS")
         col_acc1, col_acc2 = st.columns(2)
         with col_acc1:
             if st.button("📊 ESTADÍSTICAS", key="btn_estad_inicio", use_container_width=True):
@@ -846,7 +495,6 @@ def mostrar_inicio():
             if st.button("📖 INSTRUCCIONES", key="btn_inst_inicio", use_container_width=True):
                 navegar_a("instrucciones")
                 st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
 # =================== MODO SOLITARIO ===================
 
@@ -1238,7 +886,7 @@ def mostrar_dos_jugadores():
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ESTADÍSTICAS ===================
+# =================== ESTADÍSTICAS (MODIFICADA - SIN EXCEL) ===================
 
 def mostrar_estadisticas():
     """Muestra la página de estadísticas - SIN openpyxl"""
@@ -1535,7 +1183,7 @@ def main():
     st.markdown('<div class="app-card footer-app">', unsafe_allow_html=True)
     footer_col1, footer_col2, footer_col3 = st.columns(3)
     with footer_col1:
-        st.caption("Juego de adivinanza v5.0 con 3D")
+        st.caption("Juego de adivinanza v4.0")
     with footer_col2:
         st.caption("Alejandro Torres Morán")
     with footer_col3:
