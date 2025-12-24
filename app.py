@@ -5,6 +5,8 @@ import pandas as pd
 import io
 import os
 from io import BytesIO
+import plotly.graph_objects as go
+import numpy as np
 
 # =================== CONFIGURACIÓN INICIAL ===================
 st.set_page_config(
@@ -48,6 +50,35 @@ app_css = """
         background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%) !important;
         color: var(--text-light);
         min-height: 100vh;
+    }
+    
+    /* Contenedor para la palabra 3D */
+    .contenedor-3d {
+        background: linear-gradient(145deg, var(--medium-bg) 0%, var(--dark-bg) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 30px 0;
+        border: 2px solid var(--border-color);
+        box-shadow: 0 8px 30px rgba(0, 102, 179, 0.2);
+        text-align: center;
+    }
+    
+    /* Título del contenedor 3D */
+    .titulo-3d {
+        font-size: 18px;
+        color: var(--primary-light);
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+    }
+    
+    /* Instrucciones 3D */
+    .instrucciones-3d {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+        font-style: italic;
     }
     
     /* Contenido principal */
@@ -287,6 +318,11 @@ app_css = """
         .numero-secreto {
             font-size: 42px;
         }
+        
+        .contenedor-3d {
+            padding: 15px;
+            margin: 20px 0;
+        }
     }
 </style>
 """
@@ -294,11 +330,230 @@ app_css = """
 # Aplicar el CSS
 st.markdown(app_css, unsafe_allow_html=True)
 
+# =================== FUNCIÓN PARA CREAR PALABRA 3D ===================
+
+def crear_palabra_3d(palabra="ADIVINA"):
+    """Crea una visualización 3D interactiva de una palabra"""
+    
+    # Inicializar lista para almacenar las letras
+    fig = go.Figure()
+    
+    # Configurar colores
+    colores = ['#0066B3', '#0099FF', '#004C8F', '#00A86B', '#FFC107', '#E4002B']
+    
+    # Posiciones iniciales
+    x_pos = 0
+    
+    for i, letra in enumerate(palabra):
+        # Crear el texto 3D con profundidad
+        # Capa frontal (principal)
+        fig.add_trace(go.Scatter3d(
+            x=[x_pos],
+            y=[0],
+            z=[0],
+            mode='text',
+            text=letra,
+            textfont=dict(
+                size=10,
+                color=colores[i % len(colores)],
+                family="Arial Black"
+            ),
+            name=f"{letra}_frontal",
+            showlegend=False
+        ))
+        
+        # Capa trasera (para efecto 3D)
+        fig.add_trace(go.Scatter3d(
+            x=[x_pos],
+            y=[-0.5],
+            z=[0],
+            mode='text',
+            text=letra,
+            textfont=dict(
+                size=10,
+                color=colores[(i + 2) % len(colores)],
+                family="Arial Black",
+                opacity=0.7
+            ),
+            name=f"{letra}_trasera",
+            showlegend=False
+        ))
+        
+        # Conectar las capas con líneas para efecto 3D
+        fig.add_trace(go.Scatter3d(
+            x=[x_pos, x_pos],
+            y=[0, -0.5],
+            z=[0, 0],
+            mode='lines',
+            line=dict(
+                color=colores[i % len(colores)],
+                width=2,
+                opacity=0.3
+            ),
+            showlegend=False
+        ))
+        
+        x_pos += 1.2  # Espacio entre letras
+    
+    # Configurar la escena 3D
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(
+                showbackground=False,
+                showgrid=False,
+                zeroline=False,
+                showticklabels=False,
+                title=''
+            ),
+            yaxis=dict(
+                showbackground=False,
+                showgrid=False,
+                zeroline=False,
+                showticklabels=False,
+                title=''
+            ),
+            zaxis=dict(
+                showbackground=False,
+                showgrid=False,
+                zeroline=False,
+                showticklabels=False,
+                title=''
+            ),
+            camera=dict(
+                eye=dict(x=1.5, y=1.5, z=1.5)
+            ),
+            aspectmode='data'
+        ),
+        margin=dict(l=0, r=0, b=0, t=0),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        height=400,
+        width=800
+    )
+    
+    return fig
+
+# =================== FUNCIÓN PARA PALABRA 3D MEJORADA ===================
+
+def crear_palabra_3d_mejorada(palabra="JUEGO"):
+    """Crea una visualización 3D más elaborada con cubos"""
+    
+    fig = go.Figure()
+    
+    # Colores degradado
+    colores_frontal = ['#0066B3', '#0099FF', '#00A86B', '#FFC107', '#E4002B']
+    colores_lateral = ['#004C8F', '#0077CC', '#008552', '#FFA000', '#B3001E']
+    
+    # Posición inicial
+    pos_x = 0
+    
+    for i, letra in enumerate(palabra):
+        color_frontal = colores_frontal[i % len(colores_frontal)]
+        color_lateral = colores_lateral[i % len(colores_lateral)]
+        
+        # Crear un cubo 3D para cada letra
+        # Puntos del cubo
+        cube_vertices = np.array([
+            [pos_x, 0, 0], [pos_x + 1, 0, 0], [pos_x + 1, 1, 0], [pos_x, 1, 0],  # Cara frontal
+            [pos_x, 0, -0.5], [pos_x + 1, 0, -0.5], [pos_x + 1, 1, -0.5], [pos_x, 1, -0.5]  # Cara trasera
+        ])
+        
+        # Caras del cubo
+        cube_faces = [
+            [0, 1, 2, 3],  # Frontal
+            [4, 5, 6, 7],  # Trasera
+            [0, 1, 5, 4],  # Inferior
+            [2, 3, 7, 6],  # Superior
+            [1, 2, 6, 5],  # Derecha
+            [0, 3, 7, 4]   # Izquierda
+        ]
+        
+        # Añadir caras
+        for j, face in enumerate(cube_faces):
+            opacity = 0.8 if j == 0 else 0.4  # Cara frontal más opaca
+            color = color_frontal if j == 0 else color_lateral
+            
+            x = [cube_vertices[k][0] for k in face] + [cube_vertices[face[0]][0]]
+            y = [cube_vertices[k][1] for k in face] + [cube_vertices[face[0]][1]]
+            z = [cube_vertices[k][2] for k in face] + [cube_vertices[face[0]][2]]
+            
+            fig.add_trace(go.Mesh3d(
+                x=x,
+                y=y,
+                z=z,
+                opacity=opacity,
+                color=color,
+                flatshading=True,
+                showlegend=False
+            ))
+        
+        # Añadir letra en la cara frontal
+        fig.add_trace(go.Scatter3d(
+            x=[pos_x + 0.5],
+            y=[0.5],
+            z=[0.01],  # Ligeramente por delante del cubo
+            mode='text',
+            text=letra,
+            textfont=dict(
+                size=12,
+                color='white',
+                family="Arial Black"
+            ),
+            showlegend=False
+        ))
+        
+        pos_x += 1.5  # Espacio entre cubos
+    
+    # Configurar vista 3D interactiva
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(
+                visible=False,
+                range=[-1, pos_x + 1]
+            ),
+            yaxis=dict(
+                visible=False,
+                range=[-0.5, 1.5]
+            ),
+            zaxis=dict(
+                visible=False,
+                range=[-1, 1]
+            ),
+            camera=dict(
+                up=dict(x=0, y=0, z=1),
+                center=dict(x=0, y=0, z=0),
+                eye=dict(
+                    x=st.session_state.get('rotacion_x', 1.5),
+                    y=st.session_state.get('rotacion_y', 1.5),
+                    z=st.session_state.get('rotacion_z', 0.5)
+                )
+            ),
+            aspectmode='data'
+        ),
+        margin=dict(l=0, r=0, b=0, t=0),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        height=450,
+        width=800
+    )
+    
+    return fig
+
 # =================== INICIALIZACIÓN DE SESSION STATE ===================
 
 # Variable para navegación
 if 'pagina_actual' not in st.session_state:
     st.session_state.pagina_actual = "inicio"
+
+# Variables para rotación 3D
+if 'rotacion_x' not in st.session_state:
+    st.session_state.rotacion_x = 1.5
+if 'rotacion_y' not in st.session_state:
+    st.session_state.rotacion_y = 1.5
+if 'rotacion_z' not in st.session_state:
+    st.session_state.rotacion_z = 0.5
+if 'palabra_3d' not in st.session_state:
+    st.session_state.palabra_3d = "ADIVINA"
 
 # Variables para modo SOLITARIO
 if 'numero_secreto_solo' not in st.session_state:
@@ -417,19 +672,119 @@ def reiniciar_dos_jugadores():
     st.session_state.fase_j2 = 1
     st.session_state.resultado_j2 = None
 
-# =================== PÁGINA DE INICIO ===================
+# =================== PÁGINA DE INICIO CON PALABRA 3D ===================
 
 def mostrar_inicio():
-    """Muestra la página principal"""
+    """Muestra la página principal con palabra 3D"""
     st.markdown('<div class="app-card">', unsafe_allow_html=True)
     st.title("JUEGO DE ADIVINANZA")
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Contenedor para la palabra 3D
+    st.markdown('<div class="contenedor-3d">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-3d">🎮 PALABRA 3D INTERACTIVA</div>', unsafe_allow_html=True)
+    
+    # Controladores de rotación
+    col_rot1, col_rot2, col_rot3 = st.columns(3)
+    
+    with col_rot1:
+        nueva_x = st.slider(
+            "Rotación X",
+            min_value=-3.0,
+            max_value=3.0,
+            value=st.session_state.rotacion_x,
+            step=0.1,
+            key="slider_x",
+            help="Gira la palabra horizontalmente"
+        )
+        if nueva_x != st.session_state.rotacion_x:
+            st.session_state.rotacion_x = nueva_x
+            st.rerun()
+    
+    with col_rot2:
+        nueva_y = st.slider(
+            "Rotación Y",
+            min_value=-3.0,
+            max_value=3.0,
+            value=st.session_state.rotacion_y,
+            step=0.1,
+            key="slider_y",
+            help="Gira la palabra verticalmente"
+        )
+        if nueva_y != st.session_state.rotacion_y:
+            st.session_state.rotacion_y = nueva_y
+            st.rerun()
+    
+    with col_rot3:
+        nueva_z = st.slider(
+            "Rotación Z",
+            min_value=-3.0,
+            max_value=3.0,
+            value=st.session_state.rotacion_z,
+            step=0.1,
+            key="slider_z",
+            help="Gira la palabra en profundidad"
+        )
+        if nueva_z != st.session_state.rotacion_z:
+            st.session_state.rotacion_z = nueva_z
+            st.rerun()
+    
+    # Botones para presets de rotación
+    col_preset1, col_preset2, col_preset3, col_preset4 = st.columns(4)
+    
+    with col_preset1:
+        if st.button("🔄 Vista Frontal", use_container_width=True, key="btn_frontal"):
+            st.session_state.rotacion_x = 1.5
+            st.session_state.rotacion_y = 1.5
+            st.session_state.rotacion_z = 0.5
+            st.rerun()
+    
+    with col_preset2:
+        if st.button("🔍 Vista Superior", use_container_width=True, key="btn_superior"):
+            st.session_state.rotacion_x = 0.1
+            st.session_state.rotacion_y = 0.1
+            st.session_state.rotacion_z = 2.5
+            st.rerun()
+    
+    with col_preset3:
+        if st.button("🎯 Vista Lateral", use_container_width=True, key="btn_lateral"):
+            st.session_state.rotacion_x = 3.0
+            st.session_state.rotacion_y = 0.1
+            st.session_state.rotacion_z = 0.5
+            st.rerun()
+    
+    with col_preset4:
+        if st.button("🌀 Aleatorio", use_container_width=True, key="btn_aleatorio"):
+            st.session_state.rotacion_x = random.uniform(-2.0, 2.0)
+            st.session_state.rotacion_y = random.uniform(-2.0, 2.0)
+            st.session_state.rotacion_z = random.uniform(-2.0, 2.0)
+            st.rerun()
+    
+    # Selector de palabra
+    palabra_seleccionada = st.selectbox(
+        "Selecciona una palabra para mostrar en 3D:",
+        ["ADIVINA", "JUEGO", "DIVERTIDO", "NUMERO", "GANAR", "RETO"],
+        index=0,
+        key="selector_palabra"
+    )
+    
+    if palabra_seleccionada != st.session_state.palabra_3d:
+        st.session_state.palabra_3d = palabra_seleccionada
+        st.rerun()
+    
+    # Crear y mostrar la palabra 3D
+    fig = crear_palabra_3d_mejorada(st.session_state.palabra_3d)
+    st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown('<div class="instrucciones-3d">✨ Usa los controles para rotar la palabra 3D • Haz clic y arrastra en la visualización para rotar manualmente</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("""
-        ##  ¿CÓMO FUNCIONA?
+        ## 🎯 ¿CÓMO FUNCIONA?
         
         **¡Adivina el número secreto entre 1 y 1000!**
         
@@ -443,9 +798,16 @@ def mostrar_inicio():
         • Un jugador piensa el número  
         • Otro intenta adivinarlo  
         • ¡Perfecto para jugar con amigos!
+        
+        ### 🎮 CONTROLES 3D:
+        • **DESLIZADORES:** Ajusta la rotación en 3 ejes  
+        • **PRESETS:** Vistas predefinidas rápidas  
+        • **INTERACTIVO:** Arrastra para rotar manualmente
         """)
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
+        st.markdown('<div class="app-card">', unsafe_allow_html=True)
         st.markdown("### 🏆 RÉCORD ACTUAL")
         if st.session_state.estadisticas:
             mejor_partida = max(st.session_state.estadisticas, key=lambda x: x["Nota"])
@@ -462,10 +824,10 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("###  COMENZAR A JUGAR")
+        st.markdown("### 🚀 COMENZAR A JUGAR")
         
         if st.button(
-            "JUGAR MODO SOLITARIO", 
+            "🎮 JUGAR MODO SOLITARIO", 
             key="btn_solitario_inicio",
             use_container_width=True
         ):
@@ -485,7 +847,7 @@ def mostrar_inicio():
         
         st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
         
-        st.markdown("### ACCESOS RÁPIDOS")
+        st.markdown("### 📍 ACCESOS RÁPIDOS")
         col_acc1, col_acc2 = st.columns(2)
         with col_acc1:
             if st.button("📊 ESTADÍSTICAS", key="btn_estad_inicio", use_container_width=True):
@@ -495,6 +857,13 @@ def mostrar_inicio():
             if st.button("📖 INSTRUCCIONES", key="btn_inst_inicio", use_container_width=True):
                 navegar_a("instrucciones")
                 st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# =================== RESTANTE DEL CÓDIGO (MANTENIDO IGUAL) ===================
+
+# [Todas las funciones restantes se mantienen exactamente iguales...]
+# mostrar_solitario(), mostrar_dos_jugadores(), mostrar_estadisticas(), mostrar_instrucciones()
+# ... (El resto del código permanece idéntico a la versión anterior)
 
 # =================== MODO SOLITARIO ===================
 
@@ -886,7 +1255,7 @@ def mostrar_dos_jugadores():
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ESTADÍSTICAS (MODIFICADA - SIN EXCEL) ===================
+# =================== ESTADÍSTICAS ===================
 
 def mostrar_estadisticas():
     """Muestra la página de estadísticas - SIN openpyxl"""
@@ -1183,7 +1552,7 @@ def main():
     st.markdown('<div class="app-card footer-app">', unsafe_allow_html=True)
     footer_col1, footer_col2, footer_col3 = st.columns(3)
     with footer_col1:
-        st.caption("Juego de adivinanza v4.0")
+        st.caption("Juego de adivinanza v5.0 con 3D")
     with footer_col2:
         st.caption("Alejandro Torres Morán")
     with footer_col3:
