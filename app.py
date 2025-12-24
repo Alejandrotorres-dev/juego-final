@@ -57,34 +57,98 @@ app_css = """
         padding-bottom: 0rem;
     }
     
-    /* Títulos */
-    h1, h2, h3, h4 {
-        font-weight: 700;
-        color: var(--text-light);
-        margin-top: 0;
+    /* TÍTULO 3D PRINCIPAL - SOLO "JUEGO DE ADIVINANZA" */
+    .titulo-3d-principal {
+        font-size: 64px;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        position: relative;
+        animation: flotar-3d 6s ease-in-out infinite;
+        text-shadow: 
+            0 1px 0 #ccc,
+            0 2px 0 #c9c9c9,
+            0 3px 0 #bbb,
+            0 4px 0 #b9b9b9,
+            0 5px 0 #aaa,
+            0 6px 1px rgba(0,0,0,.1),
+            0 0 5px rgba(0,0,0,.1),
+            0 1px 3px rgba(0,0,0,.3),
+            0 3px 5px rgba(0,0,0,.2),
+            0 10px 20px rgba(0,0,0,.25),
+            0 0 30px rgba(0, 102, 179, 0.5),
+            0 0 40px rgba(0, 153, 255, 0.3);
     }
     
-    h1 {
-        font-size: 48px;
-        background: linear-gradient(90deg, var(--text-light), var(--primary-light));
+    @keyframes flotar-3d {
+        0%, 100% { 
+            transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
+            text-shadow: 
+                0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 10px 20px rgba(0,0,0,.25),
+                0 0 30px rgba(0, 102, 179, 0.5),
+                0 0 40px rgba(0, 153, 255, 0.3);
+        }
+        50% { 
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg); 
+            text-shadow: 
+                0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 15px 25px rgba(0,0,0,.3),
+                0 0 40px rgba(0, 102, 179, 0.6),
+                0 0 50px rgba(0, 153, 255, 0.4);
+        }
+    }
+    
+    .titulo-gradient {
+        background: linear-gradient(
+            90deg,
+            #FFD700 0%,
+            #FFA500 15%,
+            #FF6347 30%,
+            #FF1493 45%,
+            #9370DB 60%,
+            #00BFFF 75%,
+            #00FA9A 90%,
+            #FFD700 100%
+        );
+        background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 24px;
-        text-align: center;
-        position: relative;
-        padding-bottom: 15px;
+        background-clip: text;
+        animation: brillo-titulo 8s linear infinite;
     }
     
-    h1:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        border-radius: 2px;
+    @keyframes brillo-titulo {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+    
+    .subtitulo-3d {
+        font-size: 20px;
+        text-align: center;
+        color: var(--text-muted);
+        margin-top: -30px;
+        margin-bottom: 40px;
+        font-style: italic;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
     
     /* Tarjetas */
@@ -270,7 +334,7 @@ app_css = """
         font-size: 12px;
     }
     
-    /* Contenedor para la palabra 3D */
+    /* Contenedor para la palabra 3D interactiva */
     .contenedor-3d-externo {
         background: linear-gradient(145deg, var(--medium-bg) 0%, var(--dark-bg) 100%);
         border-radius: 12px;
@@ -301,8 +365,8 @@ app_css = """
     
     /* Responsive */
     @media (max-width: 768px) {
-        h1 {
-            font-size: 36px;
+        .titulo-3d-principal {
+            font-size: 42px;
         }
         
         .metric-value {
@@ -328,7 +392,7 @@ app_css = """
 # Aplicar el CSS
 st.markdown(app_css, unsafe_allow_html=True)
 
-# =================== PALABRA 3D CON HTML/CSS/JS ===================
+# =================== PALABRA 3D INTERACTIVA ===================
 
 def crear_palabra_3d_html(palabra="ADIVINA"):
     """Crea una palabra 3D con HTML/CSS puro - SIN plotly"""
@@ -675,27 +739,28 @@ def reiniciar_dos_jugadores():
     st.session_state.fase_j2 = 1
     st.session_state.resultado_j2 = None
 
-# =================== PÁGINA DE INICIO CON PALABRA 3D ===================
+# =================== PÁGINA DE INICIO CON TÍTULO 3D Y PALABRA INTERACTIVA ===================
 
 def mostrar_inicio():
-    """Muestra la página principal con palabra 3D"""
-    st.markdown('<div class="app-card">', unsafe_allow_html=True)
-    st.title("JUEGO DE ADIVINANZA")
-    st.markdown('</div>', unsafe_allow_html=True)
+    """Muestra la página principal con título 3D y palabra interactiva"""
     
-    # Contenedor para la palabra 3D
+    # TÍTULO 3D PRINCIPAL (solo "JUEGO DE ADIVINANZA")
+    st.markdown('<div class="titulo-3d-principal"><span class="titulo-gradient">JUEGO DE ADIVINANZA</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-3d">🎮 Adivina el número secreto entre 1 y 1000 🎯</div>', unsafe_allow_html=True)
+    
+    # Contenedor para la palabra 3D interactiva (separada del título)
     st.markdown('<div class="contenedor-3d-externo">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-3d">🎮 PALABRA 3D INTERACTIVA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-3d">✨ PALABRA 3D INTERACTIVA</div>', unsafe_allow_html=True)
     
-    # Selector de palabra
+    # Selector de palabra para la sección interactiva
     palabra_seleccionada = st.selectbox(
-        "Selecciona una palabra para mostrar en 3D:",
+        "Elige una palabra para jugar con el 3D:",
         ["ADIVINA", "JUEGO", "DIVERTIDO", "NUMERO", "GANAR", "RETO"],
         index=0,
         key="selector_palabra"
     )
     
-    # Mostrar palabra 3D con HTML/CSS
+    # Mostrar palabra 3D interactiva
     html_3d = crear_palabra_3d_html(palabra_seleccionada)
     st.markdown(html_3d, unsafe_allow_html=True)
     
@@ -722,7 +787,7 @@ def mostrar_inicio():
         • Otro intenta adivinarlo  
         • ¡Perfecto para jugar con amigos!
         
-        ### 🎮 CONTROLES 3D:
+        ### 🎮 CONTROLES 3D INTERACTIVOS:
         • **ARRAS TRA:** Haz clic y arrastra para rotar  
         • **BOTONES:** Rotaciones específicas en cada eje  
         • **ANIMACIÓN:** Se rota automáticamente  
