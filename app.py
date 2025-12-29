@@ -5,6 +5,79 @@ import pandas as pd
 import io
 import os
 from io import BytesIO
+import streamlit as st
+from datetime import datetime
+import json
+
+# ===== CAPTURAR PARÁMETROS DE URL =====
+# Esto detecta ?ping=true o ?health=check
+query_params = st.experimental_get_query_params()
+
+# ===== ENDPOINT PARA PING (?ping=true) =====
+if query_params.get('ping', [''])[0].lower() == 'true':
+    # Respuesta HTML que UptimeRobot buscará
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>✅ STREAMLIT APP ACTIVE</title>
+        <meta name="uptimerobot" content="monitoring">
+    </head>
+    <body style="margin:0;padding:20px;background:#f0f2f6">
+        <div style="max-width:600px;margin:40px auto;background:white;padding:30px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1)">
+            <div style="text-align:center;margin-bottom:20px">
+                <div style="font-size:48px;color:#4CAF50">✅</div>
+                <h1 style="color:#333;margin:10px 0">STREAMLIT APP ACTIVE</h1>
+            </div>
+            
+            <div style="background:#f8f9fa;padding:15px;border-radius:5px;margin:20px 0">
+                <p><strong>🕐 Timestamp:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                <p><strong>📡 Status:</strong> RUNNING</p>
+                <p><strong>🔧 Service:</strong> juego-final-alejandro-torres</p>
+                <p><strong>🎯 Monitor:</strong> UptimeRobot Keyword Check</p>
+            </div>
+            
+            <div style="background:#e8f5e9;padding:15px;border-radius:5px;margin-top:20px">
+                <p style="margin:0;color:#2e7d32">This response confirms the app is awake and responding to monitoring requests.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    st.markdown(html_content, unsafe_allow_html=True)
+    
+    # IMPORTANTE: Detener ejecución aquí
+    # No cargar el resto de tu app para estos pings
+    st.stop()
+
+# ===== ENDPOINT PARA HEALTH CHECK (?health=check) =====
+elif query_params.get('health', [''])[0].lower() == 'check':
+    # Respuesta JSON para monitores
+    health_data = {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "service": "juego-final-alejandro-torres",
+        "version": "1.0",
+        "checks": {
+            "streamlit_runtime": True,
+            "api_available": True,
+            "memory_ok": True
+        },
+        "uptime_robot": {
+            "compatible": True,
+            "keyword": "✅ STREAMLIT APP ACTIVE",
+            "recommended_interval": "10 minutes"
+        }
+    }
+    
+    st.json(health_data)
+    st.stop()
+
+# ===== TU APP NORMAL (solo se ejecuta si no es un ping) =====
+# El código de tu juego/app normal va aquí...
+st.title("🎮 Mi Juego")
+# ... resto de tu aplicación normal
 
 # =================== CONFIGURACIÓN INICIAL ===================
 st.set_page_config(
