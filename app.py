@@ -1,16 +1,16 @@
 import streamlit as st
 import random
-import datetime
+import datetime  # <-- Este sobra, puedes quitarlo
 import pandas as pd
 import io
 import os
 from io import BytesIO
-import streamlit as st
-from datetime import datetime
 import json
 
+# ===== IMPORT CORRECTO =====
+from datetime import datetime as dt  # <-- dt es el alias
+
 # ===== CAPTURAR PARÁMETROS DE URL =====
-# Esto detecta ?ping=true o ?health=check
 query_params = st.experimental_get_query_params()
 
 # ===== ENDPOINT PARA PING (?ping=true) =====
@@ -31,7 +31,7 @@ if query_params.get('ping', [''])[0].lower() == 'true':
             </div>
             
             <div style="background:#f8f9fa;padding:15px;border-radius:5px;margin:20px 0">
-                <p><strong>🕐 Timestamp:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+                <p><strong>🕐 Timestamp:</strong> {dt.now().strftime('%Y-%m-%d %H:%M:%S')}</p>  <!-- CAMBIADO: dt.now() -->
                 <p><strong>📡 Status:</strong> RUNNING</p>
                 <p><strong>🔧 Service:</strong> juego-final-alejandro-torres</p>
                 <p><strong>🎯 Monitor:</strong> UptimeRobot Keyword Check</p>
@@ -46,9 +46,6 @@ if query_params.get('ping', [''])[0].lower() == 'true':
     """
     
     st.markdown(html_content, unsafe_allow_html=True)
-    
-    # IMPORTANTE: Detener ejecución aquí
-    # No cargar el resto de tu app para estos pings
     st.stop()
 
 # ===== ENDPOINT PARA HEALTH CHECK (?health=check) =====
@@ -56,7 +53,7 @@ elif query_params.get('health', [''])[0].lower() == 'check':
     # Respuesta JSON para monitores
     health_data = {
         "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": dt.now().isoformat(),  # <-- CAMBIADO: dt.now()
         "service": "juego-final-alejandro-torres",
         "version": "1.0",
         "checks": {
@@ -66,7 +63,7 @@ elif query_params.get('health', [''])[0].lower() == 'check':
         },
         "uptime_robot": {
             "compatible": True,
-            "keyword": "✅ STREAMLIT APP ACTIVE",
+            "keyword": "STREAMLIT APP ACTIVE",  # <-- SIN EMOJI ✅
             "recommended_interval": "10 minutes"
         }
     }
