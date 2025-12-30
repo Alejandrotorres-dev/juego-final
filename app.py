@@ -63,7 +63,7 @@ elif query_params.get('health', [''])[0].lower() == 'check':
         },
         "uptime_robot": {
             "compatible": True,
-            "keyword": "STREAMLIT APP ACTIVE",  # <-- SIN EMOJI ✅
+            "keyword": "STREAMLIT APP ACTIVE", 
             "recommended_interval": "10 minutes"
         }
     }
@@ -79,7 +79,7 @@ elif query_params.get('health', [''])[0].lower() == 'check':
 # =================== CONFIGURACIÓN INICIAL ===================
 st.set_page_config(
     page_title="Juego de Adivinanza",
-    page_icon="-",
+    page_icon= None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
