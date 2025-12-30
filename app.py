@@ -73,7 +73,7 @@ elif query_params.get('health', [''])[0].lower() == 'check':
 
 # ===== TU APP NORMAL (solo se ejecuta si no es un ping) =====
 # El código de tu juego/app normal va aquí...
-st.title("🎮")
+st.title(" 🎮")
 # ... resto de tu aplicación normal
 
 # =================== CONFIGURACIÓN INICIAL ===================
