@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-import datetime  # <-- Este sobra, puedes quitarlo
+import datetime 
 import pandas as pd
 import io
 import os
@@ -20,21 +20,21 @@ if query_params.get('ping', [''])[0].lower() == 'true':
     <!DOCTYPE html>
     <html>
     <head>
-        <title>✅ STREAMLIT APP ACTIVE</title>
+        <title> STREAMLIT APP ACTIVE</title>
         <meta name="uptimerobot" content="monitoring">
     </head>
     <body style="margin:0;padding:20px;background:#f0f2f6">
         <div style="max-width:600px;margin:40px auto;background:white;padding:30px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1)">
             <div style="text-align:center;margin-bottom:20px">
-                <div style="font-size:48px;color:#4CAF50">✅</div>
+                <div style="font-size:48px;color:#4CAF50"></div>
                 <h1 style="color:#333;margin:10px 0">STREAMLIT APP ACTIVE</h1>
             </div>
             
             <div style="background:#f8f9fa;padding:15px;border-radius:5px;margin:20px 0">
-                <p><strong>🕐 Timestamp:</strong> {dt.now().strftime('%Y-%m-%d %H:%M:%S')}</p>  <!-- CAMBIADO: dt.now() -->
-                <p><strong>📡 Status:</strong> RUNNING</p>
-                <p><strong>🔧 Service:</strong> juego-final-alejandro-torres</p>
-                <p><strong>🎯 Monitor:</strong> UptimeRobot Keyword Check</p>
+                <p><strong> Timestamp:</strong> {dt.now().strftime('%Y-%m-%d %H:%M:%S')}</p>  <!-- CAMBIADO: dt.now() -->
+                <p><strong> Status:</strong> RUNNING</p>
+                <p><strong> Service:</strong> juego-final-alejandro-torres</p>
+                <p><strong> Monitor:</strong> UptimeRobot Keyword Check</p>
             </div>
             
             <div style="background:#e8f5e9;padding:15px;border-radius:5px;margin-top:20px">
@@ -50,10 +50,10 @@ if query_params.get('ping', [''])[0].lower() == 'true':
 
 # ===== ENDPOINT PARA HEALTH CHECK (?health=check) =====
 elif query_params.get('health', [''])[0].lower() == 'check':
-    # Respuesta JSON para monitores
+    # Respuesta JsON para monitores
     health_data = {
         "status": "healthy",
-        "timestamp": dt.now().isoformat(),  # <-- CAMBIADO: dt.now()
+        "timestamp": dt.now().isoformat(),  
         "service": "juego-final-alejandro-torres",
         "version": "1.0",
         "checks": {
@@ -71,10 +71,6 @@ elif query_params.get('health', [''])[0].lower() == 'check':
     st.json(health_data)
     st.stop()
 
-# ===== TU APP NORMAL (solo se ejecuta si no es un ping) =====
-# El código de tu juego/app normal va aquí...
-
-# ... resto de tu aplicación normal
 
 # =================== CONFIGURACIÓN INICIAL ===================
 st.set_page_config(
@@ -364,7 +360,7 @@ app_css = """
 # Aplicar el CSS
 st.markdown(app_css, unsafe_allow_html=True)
 
-# =================== INICIALIZACIÓN DE SESSION STATE ===================
+# INICIALIZACIÓN DE SESSION STATE 
 
 # Variable para navegación
 if 'pagina_actual' not in st.session_state:
@@ -416,7 +412,7 @@ if 'estadisticas' not in st.session_state:
     except Exception as e:
         st.session_state.estadisticas = []
 
-# =================== FUNCIONES DEL JUEGO ===================
+#  FUNCIONES DEL JUEGO 
 
 def guardar_estadisticas():
     """Guarda las estadísticas en CSV"""
@@ -487,7 +483,7 @@ def reiniciar_dos_jugadores():
     st.session_state.fase_j2 = 1
     st.session_state.resultado_j2 = None
 
-# =================== PÁGINA DE INICIO ===================
+# PÁGINA DE INICIO
 
 def mostrar_inicio():
     """Muestra la página principal"""
@@ -566,7 +562,7 @@ def mostrar_inicio():
                 navegar_a("instrucciones")
                 st.rerun()
 
-# =================== MODO SOLITARIO ===================
+#MODO SOLITARIO 
 
 def mostrar_solitario():
     """Muestra la página del modo solitario"""
@@ -753,7 +749,7 @@ def mostrar_solitario():
             st.info(f"👤 **JUGADOR:** {st.session_state.jugador_solo}")
             st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== MODO 2 JUGADORES ===================
+#  MODO 2 JUGADORES 
 
 def mostrar_dos_jugadores():
     """Muestra la página del modo 2 jugadores"""
@@ -956,7 +952,7 @@ def mostrar_dos_jugadores():
                     st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ESTADÍSTICAS (MODIFICADA - SIN EXCEL) ===================
+#  ESTADÍSTICAS  SIN EXCEL
 
 def mostrar_estadisticas():
     """Muestra la página de estadísticas - SIN openpyxl"""
@@ -1228,7 +1224,7 @@ def mostrar_instrucciones():
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =================== ROUTER PRINCIPAL ===================
+#ROUTER PRINCIPAL 
 
 def main():
     """Función principal que decide qué página mostrar"""
