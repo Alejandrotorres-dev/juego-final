@@ -7,11 +7,11 @@ from openpyxl import Workbook, load_workbook
 # --- COLORES ---
 try:
     from termcolor import colored
-    COLORES_HABILITADOS = True  # Corregido
+    COLORES_HABILITADOS = True  
 except ImportError:
     COLORES_HABILITADOS = False
     def colored(text, color=None, on_color=None, attrs=None):
-        return text  # Fallback sin color
+        return text  
 
 # --- LIMPIEZA DE PANTALLA ---
 def limpiar_pantalla():
